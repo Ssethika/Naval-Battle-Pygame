@@ -4,10 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="78cc9168-402e-4abf-bab4-4891a615fe16" name="Changes" comment="Added Buttons to the game">
-      <change afterPath="$PROJECT_DIR$/UserInterface.py" afterDir="false" />
+    <list default="true" id="78cc9168-402e-4abf-bab4-4891a615fe16" name="Changes" comment="Added a UI class so that the game so that the rest of the game and the ui would be decoupled. Gives added flexibilitly">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Button.py" beforeDir="false" afterPath="$PROJECT_DIR$/Button.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Enums.py" beforeDir="false" afterPath="$PROJECT_DIR$/Enums.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Game.py" beforeDir="false" afterPath="$PROJECT_DIR$/Game.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Terrain.py" beforeDir="false" afterPath="$PROJECT_DIR$/Terrain.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -106,7 +108,23 @@
       <option name="project" value="LOCAL" />
       <updated>1729406905053</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Added a UI class so that the game so that the rest of the game and the ui would be decoupled. Gives added flexibilitly">
+      <option name="closed" value="true" />
+      <created>1729408580060</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1729408580060</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Added a UI class so that the game so that the rest of the game and the ui would be decoupled. Gives added flexibilitly">
+      <option name="closed" value="true" />
+      <created>1729408603102</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1729408603102</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -134,7 +152,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Added Buttons to the game" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added Buttons to the game" />
+    <MESSAGE value="Added a UI class so that the game so that the rest of the game and the ui would be decoupled. Gives added flexibilitly" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added a UI class so that the game so that the rest of the game and the ui would be decoupled. Gives added flexibilitly" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -143,6 +162,21 @@
           <url>file://$PROJECT_DIR$/Cell.py</url>
           <line>8</line>
           <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Button.py</url>
+          <line>83</line>
+          <option name="timeStamp" value="5" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/UserInterface.py</url>
+          <line>10</line>
+          <option name="timeStamp" value="10" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Enums.py</url>
+          <line>8</line>
+          <option name="timeStamp" value="11" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>

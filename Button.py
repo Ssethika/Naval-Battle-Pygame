@@ -1,5 +1,6 @@
 from abc import abstractmethod, ABC
 from Renderable import Renderable
+from Enums import ShipType
 import pygame
 import pygame.font
 
@@ -50,11 +51,12 @@ class Button(ButtonInterface, Renderable):
     def check_if_clicked(self):
         mouse_pos = pygame.mouse.get_pos()
         if self.rect.collidepoint(mouse_pos):
-            if pygame.mouse.get_pressed()[0] == 0 and self.clicked == False:
+            if pygame.mouse.get_pressed()[0] == 1 and self.clicked == False:
+                print("pressed")
                 self.clicked = True
                 self.on_click()
 
-        if pygame.mouse.get_pressed()[0] == 1:
+        if pygame.mouse.get_pressed()[0] == 0:
             self.clicked = False
 
     @abstractmethod
@@ -70,4 +72,14 @@ class ShipButton(Button):
         self.ship_type = ship_type
 
     def on_click(self):
-        self.game.choose_ship_type(self.ship_type)
+        if self.check_if_ship_not_placed():
+            self.game.choose_ship_type(ShipType[self.ship_type.name])
+            self.color = (128, 128, 128)
+
+    def check_if_ship_not_placed(self):
+        if self.ship_type.name not in self.game.chosen_ships:
+            return True
+        else:
+            print(self.ship_type, self.game.chosen_ships)
+            print("You already chose this ship")
+            return False

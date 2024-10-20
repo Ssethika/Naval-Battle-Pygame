@@ -1,13 +1,14 @@
 import pygame
 from Cell import Cell
-from Enums import CellType, Direction, GameState
+from Enums import CellType, Direction, GameState, ShipType, ship_sizes
 from Renderable import Renderable
 
 
 class Terrain(Renderable):
 
     # Should start to initialise the terrain_cells with cells in it with the default type of water.
-    def __init__(self, screen):
+    def __init__(self, screen, game):
+        self.game = game
         self.screen = screen
         self.terrain_cells = [[Cell(x, y, CellType.WATER, self.screen) for x in range(10)] for y in range(10)]
 
@@ -27,6 +28,12 @@ class Terrain(Renderable):
 
     # Confirm the cell placement by turning all the SELECT cell type to SHIP.
     def select_confirm(self):
+
+        print(self.game.chosen_ships)
+        if self.game.current_select.name in self.game.chosen_ships:
+            print("You have already placed this ship")
+            return
+        self.game.chosen_ships.append(self.game.current_select.name)
         for row in self.terrain_cells:
             for cell in row:
                 if cell.state == CellType.SELECT:
@@ -54,8 +61,9 @@ class Terrain(Renderable):
                     cell.render()
 
     # The main function that handles ship placement. TODO: Separate this function into smaller functions.
-    def place_ship(self, ship_size, coordinate, direction, game):
+    def place_ship(self, ship_type, coordinate, direction, game):
 
+        ship_size = ship_sizes[ship_type]
         is_chosen_start_ship = False
 
         # cx and cy are the two coordinates of the cells that go pressed.

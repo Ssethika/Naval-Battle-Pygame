@@ -11,11 +11,15 @@ class Game:
         self.game = self
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
+        #Initialising UI
         self.ui = Ui(self.screen, self.game)
 
+        #Get the ships that are still not placed
+        self.chosen_ships = []
+
         self.game_state = GameState.ACTIVE
-        self.terrain = Terrain(self.screen)
-        self.current_select = ShipType.CRUISER
+        self.terrain = Terrain(self.screen, self)
+        self.current_select = None
         self.running = True
 
     def update(self):
@@ -45,14 +49,6 @@ class Game:
             pygame.display.flip()
             clock.tick(30)  # limits FPS to 30`
 
-    def ship_button_update(self):
-        for ship_button in self.ship_button_list:
-            ship_button.update()
-
-    def ship_button_render(self):
-        for ship_button in self.ship_button_list:
-            ship_button.render()
-
     def handle_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -69,6 +65,12 @@ class Game:
                         self.game_state = GameState.ACTIVE
 
     def check_keydown(self, event, ship_type):
+       # if ship_type in self.chosen_ships:
+        #    print("Ship is already placed")
+        #    return
+        if self.current_select is None:
+            print("You have not selected any ship. Please select one.")
+            return
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_UP:
                 self.terrain.terrain_clear()
@@ -86,7 +88,7 @@ class Game:
                 self.terrain.terrain_clear()
                 self.preview(Direction.LEFT, ship_type)
 
-    def preview(self, direction, ship_size):
+    def preview(self, direction, ship_type):
 
         # Gets the current game_state.
 
@@ -118,7 +120,7 @@ class Game:
             for row in self.terrain.terrain_cells:
                 for cell in row:
                     if cell.rect.collidepoint(mouse_pos):
-                        self.terrain.place_ship(ship_size.value, (cell.pos_x, cell.pos_y), direction, self)
+                        self.terrain.place_ship(ship_type, (cell.pos_x, cell.pos_y), direction, self)
 
     def choose_ship_type(self, ship_type):
         self.current_select = ship_type
