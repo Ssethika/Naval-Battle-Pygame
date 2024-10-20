@@ -62,7 +62,6 @@ class Button(ButtonInterface, Renderable):
         pass
 
     def update(self):
-        self.render()
         self.check_if_clicked()
 
 class ShipButton(Button):
