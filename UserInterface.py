@@ -12,7 +12,11 @@ class Ui(Renderable):
         self.cruiser_button = ShipButton((200, 20, 20), 640, 280, "Cruiser:  4", self.screen, ShipType.CRUISER, self.game)
         self.aircraft_carrier_button = ShipButton((200, 20, 20), 640, 370, "Carrier:  5", self.screen, ShipType.AIRCRAFT_CARRIER, self.game)
 
-        self.ship_buttons_list = [self.corvette_button, self.frigate_button, self.destroyer_button, self.cruiser_button, self.aircraft_carrier_button]
+        #self.ship_buttons_list = [self.corvette_button, self.frigate_button, self.destroyer_button, self.cruiser_button, self.aircraft_carrier_button]
+
+    @property
+    def ship_buttons_list(self):
+        return [self.corvette_button, self.frigate_button, self.destroyer_button, self.cruiser_button, self.aircraft_carrier_button]
 
     def run(self):
         self.render()

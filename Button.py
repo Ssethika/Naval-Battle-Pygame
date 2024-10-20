@@ -33,10 +33,14 @@ class Button(ButtonInterface, Renderable):
         self.screen = screen
         self.rect = pygame.Rect(self.pos_x, self.pos_y, self.width, self.height)
         self.font = pygame.font.SysFont('grand9kpixelregular', 20)
-        self.text = text
-        self.text_surface = self.font.render(text, False, (255, 255, 255))
+        self._text = text
+        self.text_surface = self.font.render(text, False, (255, 255, 255)).convert_alpha() # Convert_alpha gains a lot of perfor    mance
         self.text_rect = self.text_surface.get_rect(center=self.rect.center)
         self.clicked = False
+
+    def render_text(self):
+        self.screen.blit(self.text_surface, self.text_rect)
+
 
     def render(self):
         pygame.draw.rect(self.screen, self.color, self.rect)
@@ -46,7 +50,7 @@ class Button(ButtonInterface, Renderable):
         pygame.draw.line(self.screen, (255, 255, 255),(self.pos_x, self.pos_y + self.height), (self.pos_x + self.width, self.pos_y +self.height))
         pygame.draw.line(self.screen, (255, 255, 255), (self.pos_x, self.pos_y),(self.pos_x, self.pos_y + self.height))
 
-        self.screen.blit(self.text_surface, self.text_rect)
+        self.render_text()
 
     def check_if_clicked(self):
         mouse_pos = pygame.mouse.get_pos()
@@ -59,12 +63,23 @@ class Button(ButtonInterface, Renderable):
         if pygame.mouse.get_pressed()[0] == 0:
             self.clicked = False
 
+    def update(self):
+        self.check_if_clicked()
+
     @abstractmethod
     def on_click(self):
         pass
 
-    def update(self):
-        self.check_if_clicked()
+    @property
+    def text(self):
+        return self._text
+
+    @text.setter
+    def text(self, value):
+        self._text = value
+        self.render()
+        print(self._text)
+
 
 class ShipButton(Button):
     def __init__(self, color, pos_x, pos_y, text, screen, ship_type, game):
@@ -74,7 +89,7 @@ class ShipButton(Button):
     def on_click(self):
         if self.check_if_ship_not_placed():
             self.game.choose_ship_type(ShipType[self.ship_type.name])
-            self.color = (128, 128, 128)
+            self.game.pressed_ship_button = self
 
     def check_if_ship_not_placed(self):
         if self.ship_type.name not in self.game.chosen_ships:

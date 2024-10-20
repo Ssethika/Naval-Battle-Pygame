@@ -1,6 +1,6 @@
 import pygame
 from Cell import Cell
-from Enums import CellType, Direction, GameState, ShipType, ship_sizes
+from Enums import CellType, Direction, GameState, ship_sizes
 from Renderable import Renderable
 
 
@@ -60,7 +60,8 @@ class Terrain(Renderable):
                     # Otherwise, render the cell with its default color
                     cell.render()
 
-    # The main function that handles ship placement. TODO: Separate this function into smaller functions.
+
+    """The main function that handles ship placement. TODO: Separate this function into smaller functions."""
     def place_ship(self, ship_type, coordinate, direction, game):
 
         ship_size = ship_sizes[ship_type]

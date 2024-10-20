@@ -20,16 +20,20 @@ class Cell(Renderable):
         self.color = state.value
         self.screen = screen
 
-    # Rendering of each cell by taking its rectangle pygame object and its color.
-    def render(self):
-        pygame.draw.rect(self.screen, self.color, self.rect)
+    @property
+    def position(self):
+        return self.pos_x, self.pos_y
 
     @property
     def state(self):
         return self._state
 
-    # Setter function that modifies the state of an object, and also it's color at the same time.
+    """ Setter function that modifies the state of an object, and also it's color at the same time. """
     @state.setter
     def state(self, state):
         self._state = state
         self.color = state.value
+
+     # Rendering each cell based on color and rectangle
+    def render(self):
+        pygame.draw.rect(self.screen, self.color, self.rect)

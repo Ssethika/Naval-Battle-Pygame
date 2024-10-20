@@ -1,22 +1,28 @@
 import pygame
 from UserInterface import Ui
 from Terrain import Terrain
-from Enums import GameState, ShipType, Direction
+from Enums import GameState, Direction
 
 SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
 
+
+# Main game class implementation.
 class Game:
     def __init__(self):
+
+
         self.game = self
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
-        #Initialising UI
+        # Initialising UI.
         self.ui = Ui(self.screen, self.game)
 
-        #Get the ships that are still not placed
+        # List of all placed ships which is useful to guarantee that there is no duplicate
         self.chosen_ships = []
 
+        # Variable that keeps track of which button is pressed
+        self.pressed_ship_button = None
         self.game_state = GameState.ACTIVE
         self.terrain = Terrain(self.screen, self)
         self.current_select = None
@@ -60,8 +66,11 @@ class Game:
             if self.game_state == GameState.ACTIVE:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
+                        if self.pressed_ship_button is None:
+                            return
                         print("key pressed")
                         self.terrain.select_confirm()
+                        self.pressed_ship_button.color = (128, 128, 128)
                         self.game_state = GameState.ACTIVE
 
     def check_keydown(self, event, ship_type):
