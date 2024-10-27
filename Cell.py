@@ -6,7 +6,6 @@ SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
 CELL_SIZE = 60
 PADDING = 10
-#screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
 class Cell(Renderable):
 
@@ -35,5 +34,9 @@ class Cell(Renderable):
         self.color = state.value
 
      # Rendering each cell based on color and rectangle
-    def render(self):
+    def render(self) -> None:
+        """
+
+        :rtype: object
+        """
         pygame.draw.rect(self.screen, self.color, self.rect)

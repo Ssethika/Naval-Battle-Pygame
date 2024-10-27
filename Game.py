@@ -24,19 +24,20 @@ class Game:
         # Variable that keeps track of which button is pressed
         self.pressed_ship_button = None
         self.game_state = GameState.ACTIVE
-        self.terrain = Terrain(self.screen, self)
+        self.terrain_1 = Terrain(self.screen, self)
+        self.terrain_2 = Terrain(self.screen, self)
         self.current_select = None
+        self.selecting = False
         self.running = True
 
-    def update(self):
+    def run(self):
         # The main event loop.
-
         # Setup pygame, clock and screen.
         pygame.init()
         pygame.mixer.init()
         clock = pygame.time.Clock()
 
-        self.terrain.draw_line()
+        self.terrain_1.draw_line()
 
         while self.running:
             # poll for events
@@ -46,14 +47,15 @@ class Game:
 
             self.screen.fill("black")
 
-            self.terrain.render()
-            self.terrain.handle_hover()
-            self.terrain.draw_line()
+            self.terrain_1.render()
+            self.terrain_1.handle_hover()
+            self.terrain_1.draw_line()
             self.ui.run()
 
             # flip() the display to put your work on screen
             pygame.display.flip()
-            clock.tick(30)  # limits FPS to 30`
+            clock.tick(30) # limits FPS to 30`
+        pygame.quit()
 
     def handle_events(self):
         for event in pygame.event.get():
@@ -66,35 +68,40 @@ class Game:
             if self.game_state == GameState.ACTIVE:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
-                        if self.pressed_ship_button is None:
-                            return
-                        print("key pressed")
-                        self.terrain.select_confirm()
-                        self.pressed_ship_button.color = (128, 128, 128)
-                        self.game_state = GameState.ACTIVE
+                        if self.selecting:
+                            if self.pressed_ship_button is None:
+                                return
+                            if self.terrain_1.is_terrain_selected() is False:
+                                return
+                            print("key pressed")
+                            self.terrain_1.select_confirm()
+                            self.pressed_ship_button.color = (128, 128, 128) # Color the button in grey.
+                            self.game_state = GameState.ACTIVE
 
     def check_keydown(self, event, ship_type):
        # if ship_type in self.chosen_ships:
         #    print("Ship is already placed")
         #    return
+
+       # Choose which type of preview you want to choose based on ship_type and key pressed.
         if self.current_select is None:
             print("You have not selected any ship. Please select one.")
             return
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_UP:
-                self.terrain.terrain_clear()
+                self.terrain_1.terrain_clear()
                 self.preview(Direction.UP, ship_type)
 
             elif event.key == pygame.K_RIGHT:
-                self.terrain.terrain_clear()
+                self.terrain_1.terrain_clear()
                 self.preview(Direction.RIGHT, ship_type)
 
             elif event.key == pygame.K_DOWN:
-                self.terrain.terrain_clear()
+                self.terrain_1.terrain_clear()
                 self.preview(Direction.DOWN, ship_type)
 
             elif event.key == pygame.K_LEFT:
-                self.terrain.terrain_clear()
+                self.terrain_1.terrain_clear()
                 self.preview(Direction.LEFT, ship_type)
 
     def preview(self, direction, ship_type):
@@ -115,7 +122,7 @@ class Game:
         hit = False
 
         # Loop through all the cells in terrain_cells and check if at least one has been hit, If yes set the hit to True.
-        for row in self.terrain.terrain_cells:
+        for row in self.terrain_1.terrain_cells:
             for cell in row:
                 if cell.rect.collidepoint(mouse_pos):
                     hit = True
@@ -126,10 +133,10 @@ class Game:
 
         # Else place the preview of the ship.
         elif hit:
-            for row in self.terrain.terrain_cells:
+            for row in self.terrain_1.terrain_cells:
                 for cell in row:
                     if cell.rect.collidepoint(mouse_pos):
-                        self.terrain.place_ship(ship_type, (cell.pos_x, cell.pos_y), direction, self)
+                        self.terrain_1.place_ship(ship_type, (cell.pos_x, cell.pos_y), direction, self)
 
     def choose_ship_type(self, ship_type):
         self.current_select = ship_type

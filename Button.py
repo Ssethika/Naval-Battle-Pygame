@@ -1,10 +1,10 @@
-from abc import abstractmethod, ABC
+from abc import abstractmethod
 from Renderable import Renderable
 from Enums import ShipType
 import pygame
 import pygame.font
 
-class ButtonInterface(ABC):
+class ButtonInterface(Renderable):
     @abstractmethod
     def render(self):
         pass
@@ -21,7 +21,7 @@ class ButtonInterface(ABC):
     def on_click(self):
         pass
 
-class Button(ButtonInterface, Renderable):
+class Button(ButtonInterface):
     def __init__(self, color, pos_x, pos_y, width, height, text, screen, game):
         pygame.font.init()
         self.game = game
@@ -34,7 +34,7 @@ class Button(ButtonInterface, Renderable):
         self.rect = pygame.Rect(self.pos_x, self.pos_y, self.width, self.height)
         self.font = pygame.font.SysFont('grand9kpixelregular', 20)
         self._text = text
-        self.text_surface = self.font.render(text, False, (255, 255, 255)).convert_alpha() # Convert_alpha gains a lot of perfor    mance
+        self.text_surface = self.font.render(text, False, (255, 255, 255)).convert_alpha() # Convert_alpha gains a lot of performance
         self.text_rect = self.text_surface.get_rect(center=self.rect.center)
         self.clicked = False
 
@@ -87,6 +87,7 @@ class ShipButton(Button):
         self.ship_type = ship_type
 
     def on_click(self):
+        self.game.terrain_1.terrain_clear()
         if self.check_if_ship_not_placed():
             self.game.choose_ship_type(ShipType[self.ship_type.name])
             self.game.pressed_ship_button = self

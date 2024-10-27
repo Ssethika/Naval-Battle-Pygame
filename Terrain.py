@@ -38,12 +38,20 @@ class Terrain(Renderable):
             for cell in row:
                 if cell.state == CellType.SELECT:
                     cell.state = CellType.SHIP
+        self.game.selecting = False
 
     def terrain_clear(self):
         for row in self.terrain_cells:
             for cell in row:
                 if cell.state == CellType.HOVER or cell.state == CellType.SELECT:
                     cell.state = CellType.WATER
+
+    def is_terrain_selected(self):
+        for row in self.terrain_cells:
+            for cell in row:
+                if cell.state == CellType.SELECT:
+                    return True
+        return False
 
     # Function that handle mouse hovering of a cell.
     def handle_hover(self):
@@ -59,7 +67,6 @@ class Terrain(Renderable):
                 else:
                     # Otherwise, render the cell with its default color
                     cell.render()
-
 
     """The main function that handles ship placement. TODO: Separate this function into smaller functions."""
     def place_ship(self, ship_type, coordinate, direction, game):
@@ -79,12 +86,11 @@ class Terrain(Renderable):
         #chosen_start.set_cell_state(CellType.HOVER)
 
         is_colliding = False
-
+        # TODO: We really need to extract this into a function.
         #check if the first selected cell has the state of ship at the beginning
         if not is_chosen_start_ship:
             if direction == Direction.RIGHT:
                 if self.terrain_cells[cx][cy].pos_x + ship_size <= 10:
-
                     # Check if the hovered cells collide with a Cell ship
                     for y in range(ship_size):
                         if self.terrain_cells[cx][cy + y].state == CellType.SHIP:
@@ -94,6 +100,7 @@ class Terrain(Renderable):
                     if not is_colliding:
                         for x in range(ship_size):
                             self.terrain_cells[cx][cy + x].state = CellType.SELECT
+                        self.game.selecting = True
 
             elif direction is Direction.LEFT:
                 if self.terrain_cells[cx][cy].pos_x - ship_size >= -1:
@@ -103,23 +110,28 @@ class Terrain(Renderable):
                     if not is_colliding:
                         for x in range(ship_size):
                             self.terrain_cells[cx][cy - x].state = CellType.SELECT
+                        self.game.selecting = True
 
             elif direction is Direction.UP:
-                if self.terrain_cells[coordinate[1]][coordinate[0]].pos_y - ship_size >= -1:
+                if self.terrain_cells[cx][cy].pos_y - ship_size >= -1:
                     for y in range(ship_size):
                         if self.terrain_cells[cx - y][cy].state == CellType.SHIP:
                             is_colliding = True
                     if not is_colliding:
                         for x in range(ship_size):
                             self.terrain_cells[cx - x][cy].state = CellType.SELECT
+                        self.game.selecting = True
 
             elif direction is Direction.DOWN:
                 if self.terrain_cells[cx][cy].pos_y + ship_size <= 10:
                     for y in range(ship_size):
                         if self.terrain_cells[cx + y][cy].state == CellType.SHIP:
                             is_colliding = True
+                        self.game.selecting = True
+
                     if not is_colliding:
                         for x in range(ship_size):
                             self.terrain_cells[cx + x][cy].state = CellType.SELECT
+                        self.game.selecting = True
 
         game.game_state = GameState.ACTIVE
