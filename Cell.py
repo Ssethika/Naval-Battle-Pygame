@@ -18,6 +18,16 @@ class Cell(Renderable):
         self._state = state
         self.color = state.value
         self.screen = screen
+        self._is_hidden = False
+
+    @property
+    def is_hidden(self):
+        return self._is_hidden
+
+    @is_hidden.setter
+    def is_hidden(self, is_hidden):
+        print("is_hidden")
+        self._is_hidden = is_hidden
 
     @property
     def position(self):
@@ -27,9 +37,12 @@ class Cell(Renderable):
     def state(self):
         return self._state
 
-    """ Setter function that modifies the state of an object, and also it's color at the same time. """
     @state.setter
     def state(self, state):
+        """
+
+        :param state: Enum CellType
+        """
         self._state = state
         self.color = state.value
 
@@ -39,4 +52,7 @@ class Cell(Renderable):
 
         :rtype: object
         """
-        pygame.draw.rect(self.screen, self.color, self.rect)
+        if self.is_hidden:
+            pygame.draw.rect(self.screen, (0, 0, 0), self.rect)
+        else:
+            pygame.draw.rect(self.screen, self.color, self.rect)

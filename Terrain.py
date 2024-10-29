@@ -10,7 +10,19 @@ class Terrain(Renderable):
     def __init__(self, screen, game):
         self.game = game
         self.screen = screen
+        self._is_hidden = False
         self.terrain_cells = [[Cell(x, y, CellType.WATER, self.screen) for x in range(10)] for y in range(10)]
+
+    @property
+    def is_hidden(self):
+        return self._is_hidden
+
+    @is_hidden.setter
+    def is_hidden(self, is_hidden):
+        for row in self.terrain_cells:
+            for cell in row:
+                cell.is_hidden = True
+        self._is_hidden = is_hidden
 
     # draw the lines of the terrain.
     def draw_line(self):
@@ -33,20 +45,23 @@ class Terrain(Renderable):
         if self.game.current_select.name in self.game.chosen_ships:
             print("You have already placed this ship")
             return
-        self.game.chosen_ships.append(self.game.current_select.name)
+
         for row in self.terrain_cells:
             for cell in row:
                 if cell.state == CellType.SELECT:
                     cell.state = CellType.SHIP
+
         self.game.selecting = False
 
-    def terrain_clear(self):
+        self.game.chosen_ships.append(self.game.current_select.name)
+
+    def clear(self):
         for row in self.terrain_cells:
             for cell in row:
                 if cell.state == CellType.HOVER or cell.state == CellType.SELECT:
                     cell.state = CellType.WATER
 
-    def is_terrain_selected(self):
+    def is_selected(self):
         for row in self.terrain_cells:
             for cell in row:
                 if cell.state == CellType.SELECT:
