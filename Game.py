@@ -20,6 +20,7 @@ class Game:
         # List of all placed ships which is useful to guarantee that there is no duplicate
         self.chosen_ships = []
         self.is_placing_ships = True
+        self.is_attacking_ships = True
         # Variable that keeps track of which button is pressed
         self.pressed_ship_button = None
         self.game_state = GameState.ACTIVE
