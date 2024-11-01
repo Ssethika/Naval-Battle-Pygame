@@ -8,7 +8,7 @@ from UIElement import UIElement
 
 
 class Button(UIElement):
-    def __init__(self, color, pos_x, pos_y, width, height, text, screen, game):
+    def __init__(self, color, pos_x, pos_y, width, height, text: str, screen, game):
         pygame.font.init()
         self.game = game
         self.pos_x = pos_x

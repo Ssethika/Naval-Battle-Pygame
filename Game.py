@@ -20,7 +20,7 @@ class Game:
         # List of all placed ships which is useful to guarantee that there is no duplicate
         self.chosen_ships = []
         self.is_placing_ships = True
-        self.is_attacking_ships = True
+        self.is_attacking_ships = False
         # Variable that keeps track of which button is pressed
         self.pressed_ship_button = None
         self.game_state = GameState.ACTIVE
@@ -47,11 +47,12 @@ class Game:
         while self.running:
             # poll for events
             # pygame.QUIT event means the user clicked X to close your window
+            if self.is_placing_ships is True:
+                self.place_ships(clock)
 
-            self.place_ships(clock)
-
-            self.ui.hide()
+            self.screen.fill("black")
             self.ui.run()
+            #self.ui.hide()
             self.handle_quit()
             self.current_player.terrain.render()
             self.current_player.terrain.handle_hover()
@@ -179,12 +180,21 @@ class Game:
                 self.current_player = self.player_2
             elif len(self.chosen_ships) >= 5 and self.current_player is self.player_2:
                 # self.ui.reset()
-                self.ui.hide()
+                #self.ui.hide()
+                #self.ui.reset()
                 self.player_1.terrain.is_hidden = True
                 self.player_2.terrain.is_hidden = True
                 self.current_player = self.player_1
                 self.ui.disable_ship_buttons()
+                for button in self.ui.ship_buttons_list:
+                    button.hide()
+                self.ui.text_selected_ship.coords = (650, 10
+
+
+                                                     )
+                #self.ui.text_current_player.hide()
                 self.is_placing_ships = False
+                self.is_attacking_ships = True
 
             pygame.display.flip()
             clock.tick(30)  # limits FPS to 30`

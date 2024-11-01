@@ -8,10 +8,11 @@ CELL_SIZE = 60
 PADDING = 10
 
 class Cell(Renderable):
-
-    # Initialization.
+    """
+    The cell object of the game. The cell has a state  and a position on the board
+    """
     def __init__(self, pos_x, pos_y, state, screen):
-        # Pygame rectangle.
+
         self.rect = pygame.Rect(0 + pos_x * CELL_SIZE + PADDING, pos_y * CELL_SIZE + PADDING, CELL_SIZE, CELL_SIZE)
         self.pos_x = pos_x
         self.pos_y = pos_y
@@ -31,6 +32,10 @@ class Cell(Renderable):
 
     @property
     def position(self):
+        """
+        Give a tuple of the position in the board of the cell.
+        :return: tuple: (integer, integer)
+        """
         return self.pos_x, self.pos_y
 
     @property
@@ -40,8 +45,10 @@ class Cell(Renderable):
     @state.setter
     def state(self, state):
         """
-
         :param state: Enum CellType
+
+        Sets the state and also the color as the state value.
+        Doing this cause Enums in python are weird,
         """
         self._state = state
         self.color = state.value
@@ -49,6 +56,7 @@ class Cell(Renderable):
      # Rendering each cell based on color and rectangle
     def render(self) -> None:
         """
+        Render the cell.
 
         :rtype: object
         """
@@ -56,3 +64,10 @@ class Cell(Renderable):
             pygame.draw.rect(self.screen, (0, 0, 0), self.rect)
         else:
             pygame.draw.rect(self.screen, self.color, self.rect)
+
+    def reveal(self):
+        """
+        Reveal the cell if hidden
+
+        """
+        pass
