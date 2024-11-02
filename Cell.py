@@ -19,6 +19,7 @@ class Cell(Renderable):
         self._state = state
         self.color = state.value
         self.screen = screen
+        self.hit = False
         self._is_hidden = False
 
     @property
@@ -65,9 +66,10 @@ class Cell(Renderable):
         else:
             pygame.draw.rect(self.screen, self.color, self.rect)
 
-    def reveal(self):
+    def reveal(self) -> None:
         """
         Reveal the cell if hidden
-
         """
+        self.hit = True
+        self.is_hidden = False
         pass

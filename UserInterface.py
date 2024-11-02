@@ -13,12 +13,14 @@ class Ui(UIElement):
         self.hidden = False
         self.text_selected_ship = Text(650, 450, "None", self.screen, self.game)
         self.text_current_player = Text(275, 620, "Current: Player", self.screen, self.game)
+        self.text_score = Text(400, 620, "", self.screen, self.game)
         self.corvette_button = ShipButton((200, 20, 20), 640, 10, "Corvette: 2", self.screen, ShipType.CORVETTE, self.game)
         self.frigate_button = ShipButton((200, 20, 20), 640, 100, "Frigate:  3", self.screen, ShipType.FRIGATE, self.game)
         self.destroyer_button = ShipButton((200, 20, 20), 640, 190, "Destroyer:  3", self.screen, ShipType.DESTROYER, self.game)
         self.cruiser_button = ShipButton((200, 20, 20), 640, 280, "Cruiser:  4", self.screen, ShipType.CRUISER, self.game)
         self.aircraft_carrier_button = ShipButton((200, 20, 20), 640, 370, "Carrier:  5", self.screen, ShipType.AIRCRAFT_CARRIER, self.game)
 
+        self.ui_elements_placing_ships = [self.text_selected_ship, *self.ship_buttons_list]
         self.ui_elements_placing_ships = [self.text_selected_ship, *self.ship_buttons_list]
         print(self.ui_elements_placing_ships)
 
@@ -41,6 +43,9 @@ class Ui(UIElement):
             self.ship_button_render()
         self.text_selected_ship.render()
         self.text_current_player.render()
+        if self.game.is_attacking_ships is True:
+            self.text_score.text_literal = f"Score: {self.game.current_player.score}"
+            self.text_score.render()
 
     def hide(self):
         self.is_placing_ships = False
@@ -63,8 +68,7 @@ class Ui(UIElement):
                 self.text_selected_ship.text_literal = f"Current:  {str(self.game.current_select).split(".")[-1]} "
         elif self.game.is_attacking_ships is True:
             assert not self.game.is_placing_ships
-
-            self.text_selected_ship.text_literal = "Yo"
+            #self.text_selected_ship.text_literal = ""
 
         self.text_current_player.text_literal = "Player: 1" if self.game.current_player is self.game.player_1 else "Player: 2"
 
