@@ -1,4 +1,3 @@
-from Renderable import Renderable
 from Enums import ShipType, ship_sizes
 from Button import ShipButton
 from Text import Text

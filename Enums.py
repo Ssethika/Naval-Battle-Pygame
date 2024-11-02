@@ -4,6 +4,7 @@ import enum
 class GameState(enum.Enum):
     ACTIVE = 0
     PLACE = 1
+    ATTACKING = 2
 
 class CellType(enum.Enum):
     HOVER = (255, 255, 255)

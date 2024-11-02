@@ -1,5 +1,3 @@
-import time
-
 import pygame
 from Player import Player
 from UserInterface import Ui
@@ -52,6 +50,7 @@ class Game:
             # pygame.QUIT event means the user clicked X to close your window
             if self.is_placing_ships is True:
                 self.place_ships(clock)
+                self.game_state = GameState.ATTACKING
 
             self.screen.fill("black")
             self.ui.run()
@@ -212,20 +211,13 @@ class Game:
                 self.ui.reset()
                 self.current_player = self.player_2
             elif len(self.chosen_ships) >= 5 and self.current_player is self.player_2:
-                # self.ui.reset()
-                #self.ui.hide()
-                #self.ui.reset()
                 self.player_1.terrain.is_hidden = True
                 self.player_2.terrain.is_hidden = True
                 self.current_player = self.player_1
                 self.ui.disable_ship_buttons()
                 for button in self.ui.ship_buttons_list:
                     button.hide()
-                self.ui.text_selected_ship.coords = (650, 10
-
-
-                                                     )
-                #self.ui.text_current_player.hide()
+                self.ui.text_selected_ship.coords = (650, 10)
                 self.is_placing_ships = False
                 self.is_attacking_ships = True
 
