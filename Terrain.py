@@ -13,6 +13,9 @@ class Terrain(Renderable):
         self._is_hidden = False
         self.terrain_cells = [[Cell(x, y, CellType.WATER, self.screen) for x in range(10)] for y in range(10)]
 
+        #Used only during the attacking phase of the game
+        self.clicked = False
+
     @property
     def is_hidden(self):
         return self._is_hidden

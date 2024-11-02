@@ -10,6 +10,9 @@ class Ui(UIElement):
         self.game = game
         self.is_placing_ships = True
         self.hidden = False
+
+        self.text_number_remaining_ship = Text(700, 600, "", self.screen, self.game)
+        self.text_number_of_shots = Text(500, 620, "", self.screen, self.game)
         self.text_selected_ship = Text(650, 450, "None", self.screen, self.game)
         self.text_current_player = Text(275, 620, "Current: Player", self.screen, self.game)
         self.text_score = Text(400, 620, "", self.screen, self.game)
@@ -42,9 +45,15 @@ class Ui(UIElement):
             self.ship_button_render()
         self.text_selected_ship.render()
         self.text_current_player.render()
+
         if self.game.is_attacking_ships is True:
             self.text_score.text_literal = f"Score: {self.game.current_player.score}"
+            self.text_number_of_shots.text_literal = f"Shots: {self.game.current_player.shots}"
+
+            #TODO: Keep track on which ships is remaining.
+            #self.text_selected_ship = f"Remaining: {self.game.current_player.score}"
             self.text_score.render()
+            self.text_number_of_shots.render()
 
     def hide(self):
         self.is_placing_ships = False

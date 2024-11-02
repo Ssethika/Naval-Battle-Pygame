@@ -6,8 +6,10 @@
   <component name="ChangeListManager">
     <list default="true" id="78cc9168-402e-4abf-bab4-4891a615fe16" name="Changes" comment="Finished the program logic. Just need to add UI on the program and the main menu.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Enums.py" beforeDir="false" afterPath="$PROJECT_DIR$/Enums.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Game.py" beforeDir="false" afterPath="$PROJECT_DIR$/Game.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Player.py" beforeDir="false" afterPath="$PROJECT_DIR$/Player.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Terrain.py" beforeDir="false" afterPath="$PROJECT_DIR$/Terrain.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Text.py" beforeDir="false" afterPath="$PROJECT_DIR$/Text.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/UserInterface.py" beforeDir="false" afterPath="$PROJECT_DIR$/UserInterface.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -223,7 +225,15 @@
       <option name="project" value="LOCAL" />
       <updated>1730567452129</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="Finished the program logic. Just need to add UI on the program and the main menu.">
+      <option name="closed" value="true" />
+      <created>1730567562154</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1730567562154</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">

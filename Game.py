@@ -29,8 +29,8 @@ class Game:
         self.terrain_1 = Terrain(self.screen, self)
         self.terrain_2 = Terrain(self.screen, self)
 
-        self.player_1 = Player(self.terrain_1)
-        self.player_2 = Player(self.terrain_2)
+        self.player_1 = Player(self.terrain_1, "Player 1")
+        self.player_2 = Player(self.terrain_2, "Player 2")
         self.current_player = self.player_1
 
         self.current_select = None
@@ -59,6 +59,10 @@ class Game:
             #self.current_player.terrain.handle_hover()
             self.current_player.terrain.draw_line()
             self.handle_ship_attack_events()
+            if self.current_player.score >= 17:
+                self.ui.text_selected_ship = f"{str(self.current_player)} has won"
+                pygame.time.set_timer(REVEAL_DELAY_EVENT, 500)
+                self.running = False
             # flip() the display to put your work on screen
             pygame.display.flip()
             clock.tick(30) # limits FPS to 30`
@@ -81,28 +85,32 @@ class Game:
         for row in self.current_player.terrain.terrain_cells:
             for cell in row:
                 mouse_pos = pygame.mouse.get_pos()
-                if cell.rect.collidepoint(mouse_pos):
-                    if pygame.mouse.get_pressed()[0] == 1 and self.clicked == False:
-                        print("pressed")
-                        if cell.state == CellType.WATER:
-                            self.ui.text_selected_ship.text_literal = "Missed!! "
-                        elif cell.state == CellType.SHIP:
-                            self.ui.text_selected_ship.text_literal = "Shot!! "
-                            if cell.hit is False:
-                                self.current_player.score += 1
-                        cell.reveal()
-                        self.clicked = True
-                        pygame.time.set_timer(REVEAL_DELAY_EVENT, 500)
+                if self.current_player.terrain.clicked is False:
+                    if cell.rect.collidepoint(mouse_pos):
+                        if pygame.mouse.get_pressed()[0] == 1:
+                            print("pressed")
+                            if cell.state == CellType.WATER:
+                                self.ui.text_selected_ship.text_literal = "Missed!! "
+                            elif cell.state == CellType.SHIP:
+                                self.ui.text_selected_ship.text_literal = "Shot!! "
+                                if cell.hit is False:
+                                    self.current_player.score += 1
+                            cell.reveal()
+                            self.current_player.terrain.clicked = True
+                            pygame.time.set_timer(REVEAL_DELAY_EVENT, 500)
+                            self.current_player.shots += 1
+
 
 
                     if pygame.mouse.get_pressed()[0] == 0:
-                        self.clicked = False
+                        self.current_player.terrain.clicked = False
 
     def handle_timer_event(self, event):
         if event.type == REVEAL_DELAY_EVENT:
             self.current_player = self.player_2 if self.current_player is self.player_1 else self.player_1
             # Switch players after the delay
             # Stop the timer so it doesn't keep firing
+            self.current_player.terrain.clicked = False
             pygame.time.set_timer(REVEAL_DELAY_EVENT, 0)
 
     def handle_ship_placing_events(self):
