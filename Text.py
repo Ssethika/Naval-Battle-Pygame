@@ -88,8 +88,8 @@ class Text(UIElement):
 
      def hide(self):
          self.hidden = True
-         self.pos_y = 2000
-         self.pos_x = 2000
+         self._pos_y = 2000
+         self._pos_x = 2000
          print("hidden")
          self.text_literal = " "
          #self.text_surface = self.font.render("", False, (0,0,0))
