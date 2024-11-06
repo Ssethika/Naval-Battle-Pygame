@@ -1,9 +1,7 @@
 from abc import abstractmethod
-from Renderable import Renderable
 from Enums import ShipType
 import pygame
 import pygame.font
-
 from UIElement import UIElement
 
 
@@ -98,3 +96,11 @@ class ShipButton(Button):
             print(self.ship_type, self.game.chosen_ships)
             print("You already chose this ship")
             return False
+
+class MenuButton(Button):
+    def __init__(self, pos_x, pos_y, text, screen, game, on_click_method):
+        super().__init__((0, 255, 0), pos_x, pos_y, 160, 60, text, screen, game)
+        self.on_click_method = on_click_method
+
+    def on_click(self):
+        self.on_click_method()

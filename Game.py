@@ -1,8 +1,10 @@
+from random import randint
+
 import pygame
 from Player import Player
 from UserInterface import Ui
 from Terrain import Terrain
-from Enums import GameState, Direction, CellType
+from Enums import GameState, Direction, CellType, ShipType
 
 SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
@@ -49,7 +51,7 @@ class Game:
         while self.running:
             # poll for events
             # pygame.QUIT event means the user clicked X to close your window
-            if self.is_placing_ships is True:
+            if self.is_placing_ships:
                 self.place_ships(clock)
                 self.game_state = GameState.ATTACKING
 
@@ -69,6 +71,71 @@ class Game:
 
         pygame.quit()
 
+    def run_ai(self):
+        pygame.init()
+        pygame.mixer.init()
+        clock = pygame.time.Clock()
+        colliding = None
+        while colliding != "Success":
+            if randint(0,1):
+                colliding = self.player_2.terrain.place_ship_ai(ShipType.CORVETTE, (randint(0, 8),randint(0, 9)), Direction.RIGHT, self)
+            else:
+                colliding = self.player_2.terrain.place_ship_ai(ShipType.CORVETTE, (randint(0, 9), randint(0, 8)), Direction.DOWN, self)
+            print("Corvette",colliding)
+
+        self.player_2.terrain.select_confirm_ai()
+        colliding = None
+
+        while colliding != "Success":
+            if randint(0, 1):
+                colliding = self.player_2.terrain.place_ship_ai(ShipType.FRIGATE, (randint(0, 7), randint(0, 9)), Direction.RIGHT, self)
+            else:
+                colliding = self.player_2.terrain.place_ship_ai(ShipType.FRIGATE, (randint(0, 9), randint(0, 7)), Direction.DOWN, self)
+            print("Frigate", colliding)
+
+        self.player_2.terrain.select_confirm_ai()
+        colliding = None
+
+        while colliding != "Success":
+            if randint(0, 1):
+               colliding = self.player_2.terrain.place_ship_ai(ShipType.DESTROYER,(randint(0, 7), randint(0, 9)), Direction.RIGHT, self)
+            else:
+                colliding = self.player_2.terrain.place_ship_ai(ShipType.DESTROYER, (randint(0, 9), randint(0, 7)), Direction.DOWN, self)
+            print("Destroyer", colliding)
+
+        self.player_2.terrain.select_confirm_ai()
+        colliding = None
+        while colliding != "Success":
+            if randint(0, 1):
+                colliding = self.player_2.terrain.place_ship_ai(ShipType.CRUISER,(randint(0, 6), randint(0, 9)), Direction.RIGHT, self)
+            else:
+                colliding = self.player_2.terrain.place_ship_ai(ShipType.CRUISER, (randint(0, 9), randint(0, 6)), Direction.DOWN, self)
+            print("Cruiser", colliding)
+
+        self.player_2.terrain.select_confirm_ai()
+        colliding = None
+        while colliding != "Success":
+            if randint(0, 1):
+                 colliding = self.player_2.terrain.place_ship_ai(ShipType.AIRCRAFT_CARRIER,(randint(0, 5), randint(0, 9)), Direction.RIGHT, self)
+            else:
+                 colliding = self.player_2.terrain.place_ship_ai(ShipType.AIRCRAFT_CARRIER, (randint(0, 9), randint(0, 5)), Direction.DOWN, self)
+            print("Carrier", colliding)
+
+        #self.player_2.terrain.place_ship(ShipType.CORVETTE, (randint(0, 6), randint(0, 6)), Direction.RIGHT, self)
+        #self.player_2.terrain.place_ship(ShipType.CORVETTE, (randint(0, 5), randint(0, 8)), Direction.RIGHT, self)
+        self.player_2.terrain.select_confirm_ai()
+        print(self.player_2.terrain)
+        while self.running:
+            self.screen.fill("black")
+            self.player_2.terrain.render()
+            self.player_2.terrain.draw_line()
+            self.handle_events()
+            pygame.display.flip()
+            clock.tick(30)
+
+        pygame.quit()
+
+
     def handle_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -87,6 +154,7 @@ class Game:
             if event.type == FINISH_DELAY_EVENT:
                 self.handle_timer_event(event)
 
+
     def handle_ship_attack_events(self):
         for row in self.current_player.terrain.terrain_cells:
             for cell in row:
@@ -98,13 +166,14 @@ class Game:
                             if cell.state == CellType.WATER:
                                 self.ui.text_selected_ship.text_literal = "Missed!! "
                             elif cell.state == CellType.SHIP:
+                                cell.state = CellType.SUNK
                                 self.ui.text_selected_ship.text_literal = "Shot!! "
                                 if cell.hit is False:
                                     self.current_player.score += 1
                             cell.reveal()
                             self.current_player.shots += 1
                             self.current_player.terrain.clicked = True
-                            if cell.state == CellType.SHIP:
+                            if cell.state == CellType.SUNK:
                                 pygame.time.set_timer(HIT_REVEAL_DELAY_EVENT, 300)
                             elif cell.state == CellType.WATER:
                                 pygame.time.set_timer(MISSED_REVEAL_DELAY_EVENT, 500)
@@ -124,7 +193,7 @@ class Game:
             pygame.time.set_timer(HIT_REVEAL_DELAY_EVENT, 0)
         elif event.type == FINISH_DELAY_EVENT:
             self.running = False
-            pygame.time.set_timer(FINISH_DELAY_EVENT)
+            pygame.time.set_timer(FINISH_DELAY_EVENT, 50)
 
     def handle_ship_placing_events(self):
         for event in pygame.event.get():

@@ -11,7 +11,7 @@ class CellType(enum.Enum):
     SELECT = (173, 216, 230)
     WATER = (0, 0, 255)
     SHIP = (100, 100, 100)
-    SUNK = (0, 0, 0)
+    SUNK = (200, 0, 0)
 
 class ShipType(Enum):
     AIRCRAFT_CARRIER = 5

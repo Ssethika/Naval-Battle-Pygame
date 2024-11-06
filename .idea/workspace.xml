@@ -5,8 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="78cc9168-402e-4abf-bab4-4891a615fe16" name="Changes" comment="Resolved a bug where you could click two cells during the ship attack phase.">
+      <change afterPath="$PROJECT_DIR$/Menu.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Button.py" beforeDir="false" afterPath="$PROJECT_DIR$/Button.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Enums.py" beforeDir="false" afterPath="$PROJECT_DIR$/Enums.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Game.py" beforeDir="false" afterPath="$PROJECT_DIR$/Game.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Terrain.py" beforeDir="false" afterPath="$PROJECT_DIR$/Terrain.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Text.py" beforeDir="false" afterPath="$PROJECT_DIR$/Text.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -56,14 +62,14 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Python.main.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;debugger.dataViews.python.type.renderers&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python.main.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "master",
+    "settings.editor.selected.configurable": "debugger.dataViews.python.type.renderers"
   }
-}</component>
+}]]></component>
   <component name="QodanaReportsService">
     <option name="descriptions">
       <ReportDescription localRun="true" path="C:\Users\crist\AppData\Local\Temp\qodana_output\qodana.sarif.json" reportGuid="de72cfd0-f0e0-45d0-9e44-d93570975c2e" reportId="pythonProject/qodana/2024-10-20" />
@@ -237,7 +243,23 @@
       <option name="project" value="LOCAL" />
       <updated>1730581589523</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="Resolved a bug where you could click two cells during the ship attack phase.">
+      <option name="closed" value="true" />
+      <created>1730704552753</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1730704552754</updated>
+    </task>
+    <task id="LOCAL-00017" summary="Resolved a bug where you could click two cells during the ship attack phase.">
+      <option name="closed" value="true" />
+      <created>1730704613463</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1730704613463</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
