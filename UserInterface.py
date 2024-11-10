@@ -50,7 +50,6 @@ class Ui(UIElement):
             self.text_number_of_shots.text_literal = f"Shots: {self.game.current_player.shots}"
 
             #TODO: Keep track on which ships is remaining.
-            #self.text_selected_ship = f"Remaining: {self.game.current_player.score}"
             self.text_score.render()
             self.text_number_of_shots.render()
 

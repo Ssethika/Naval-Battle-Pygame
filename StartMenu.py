@@ -25,7 +25,7 @@ class StartMenu(UIElement):
 
     def hide(self):
         self.button_play_ai.enabled = False
-        self.button_play_ai.enabled = False
+        self.button_play.enabled = False
         self.rendering = False
 
     def reset(self):
