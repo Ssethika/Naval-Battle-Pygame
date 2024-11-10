@@ -7,10 +7,11 @@ from Renderable import Renderable
 class Terrain(Renderable):
 
     # Should start to initialise the terrain_cells with cells in it with the default type of water.
-    def __init__(self, screen, game):
+    def __init__(self, screen, game, border_color):
         self.game = game
         self.screen = screen
         self._is_hidden = False
+        self.border_color = border_color
         self.terrain_cells = [[Cell(x, y, CellType.WATER, self.screen) for x in range(10)] for y in range(10)]
 
         #Used only during the attacking phase of the game
@@ -30,10 +31,10 @@ class Terrain(Renderable):
     # draw the lines of the terrain.
     def draw_line(self):
         for z in range(11):
-            pygame.draw.line(self.screen, (255, 255, 255), (10, 0 + z * 60 + 10), (610, 0 + z * 60 + 10))
+            pygame.draw.line(self.screen, self.border_color, (10, 0 + z * 60 + 10), (610, 0 + z * 60 + 10))
 
         for w in range(11):
-            pygame.draw.line(self.screen, (255, 255, 255), (0 + w * 60 + 10, 10), (0 + w * 60 + 10, 610))
+            pygame.draw.line(self.screen, self.border_color, (0 + w * 60 + 10, 10), (0 + w * 60 + 10, 610))
 
     # Render each cell of the terrain
     def render(self):
@@ -54,7 +55,7 @@ class Terrain(Renderable):
                 if cell.state == CellType.SELECT:
                     cell.state = CellType.SHIP
 
-        self.game.selecting = False
+        self.game.selecting_cells = False
 
         self.game.chosen_ships.append(self.game.current_select.name)
 
@@ -131,7 +132,7 @@ class Terrain(Renderable):
                     if not is_colliding:
                         for x in range(ship_size):
                             self.terrain_cells[cx][cy + x].state = CellType.SELECT
-                        self.game.selecting = True
+                        self.game.selecting_cells = True
 
             elif direction is Direction.LEFT:
                 if self.terrain_cells[cx][cy].pos_x - ship_size >= -1:
@@ -143,7 +144,7 @@ class Terrain(Renderable):
                     if not is_colliding:
                         for x in range(ship_size):
                             self.terrain_cells[cx][cy - x].state = CellType.SELECT
-                        self.game.selecting = True
+                        self.game.selecting_cells = True
 
             elif direction is Direction.UP:
                 if self.terrain_cells[cx][cy].pos_y - ship_size >= -1:
@@ -155,7 +156,7 @@ class Terrain(Renderable):
                     if not is_colliding:
                         for x in range(ship_size):
                             self.terrain_cells[cx - x][cy].state = CellType.SELECT
-                        self.game.selecting = True
+                        self.game.selecting_cells = True
 
 
             elif direction is Direction.DOWN:
@@ -164,13 +165,13 @@ class Terrain(Renderable):
                         if self.terrain_cells[cx + y][cy].state == CellType.SHIP:
                             is_colliding = True
                             print(f"Colliding: {is_colliding}")
-                        self.game.selecting = True
+                        self.game.selecting_cells = True
 
 
                     if not is_colliding:
                         for x in range(ship_size):
                             self.terrain_cells[cx + x][cy].state = CellType.SELECT
-                        self.game.selecting = True
+                        self.game.selecting_cells = True
 
         game.game_state = GameState.ACTIVE
 
@@ -213,7 +214,7 @@ class Terrain(Renderable):
                     if not is_colliding:
                         for x in range(ship_size):
                             self.terrain_cells[cx][cy + x].state = CellType.SELECT
-                        self.game.selecting = True
+                        self.game.selecting_cells = True
 
             elif direction is Direction.LEFT:
                 if self.terrain_cells[cx][cy].pos_x - ship_size >= -1:
@@ -226,7 +227,7 @@ class Terrain(Renderable):
                     if not is_colliding:
                         for x in range(ship_size):
                             self.terrain_cells[cx][cy - x].state = CellType.SELECT
-                        self.game.selecting = True
+                        self.game.selecting_cells = True
 
             elif direction is Direction.UP:
                 if self.terrain_cells[cx][cy].pos_y - ship_size >= -1:
@@ -239,7 +240,7 @@ class Terrain(Renderable):
                     if not is_colliding:
                         for x in range(ship_size):
                             self.terrain_cells[cx - x][cy].state = CellType.SELECT
-                        self.game.selecting = True
+                        self.game.selecting_cells = True
 
 
             elif direction is Direction.DOWN:
@@ -249,13 +250,13 @@ class Terrain(Renderable):
                             is_colliding = True
                             print(f"Colliding: {is_colliding}")
                             return "Collided"
-                        self.game.selecting = True
+                        self.game.selecting_cells = True
 
 
                     if not is_colliding:
                         for x in range(ship_size):
                             self.terrain_cells[cx + x][cy].state = CellType.SELECT
-                        self.game.selecting = True
+                        self.game.selecting_cells = True
 
         game.game_state = GameState.ACTIVE
         return "Success"

@@ -6,9 +6,8 @@ from UIElement import UIElement
 
 
 class Button(UIElement):
-    def __init__(self, color, pos_x, pos_y, width, height, text: str, screen, game):
+    def __init__(self, color, pos_x, pos_y, width, height, text: str, screen):
         pygame.font.init()
-        self.game = game
         self.pos_x = pos_x
         self.pos_y = pos_y
         self.width = width
@@ -40,6 +39,7 @@ class Button(UIElement):
         pygame.draw.line(self.screen, self.border_color, (self.pos_x, self.pos_y),(self.pos_x, self.pos_y + self.height))
 
         self.render_text()
+        self.update()
 
     def check_if_clicked(self):
         if self.enabled:
@@ -59,8 +59,8 @@ class Button(UIElement):
         self.check_if_clicked()
 
     def hide(self):
-        self.color = self.game.background_color
-        self.border_color = self.game.background_color
+        self.color = (0, 0, 0)
+        self.border_color = (0, 0, 0)
         self.hidden = True
 
 
@@ -81,8 +81,9 @@ class Button(UIElement):
 
 class ShipButton(Button):
     def __init__(self, color, pos_x, pos_y, text, screen, ship_type, game):
-        super().__init__(color, pos_x, pos_y, 160, 60, text, screen, game)
+        super().__init__(color, pos_x, pos_y, 160, 60, text, screen)
         self.ship_type = ship_type
+        self.game = game
 
     def on_click(self):
         self.game.current_player.terrain.clear()
@@ -98,9 +99,12 @@ class ShipButton(Button):
             return False
 
 class MenuButton(Button):
-    def __init__(self, pos_x, pos_y, text, screen, game, on_click_method):
-        super().__init__((0, 255, 0), pos_x, pos_y, 160, 60, text, screen, game)
+    def __init__(self, pos_x, pos_y, text, screen, on_click_method, game):
+        super().__init__((0, 255, 0), pos_x, pos_y, 160, 60, text, screen)
+        self.game = game
         self.on_click_method = on_click_method
 
     def on_click(self):
+        # self.game.running = True
+        print("Clicked")
         self.on_click_method()

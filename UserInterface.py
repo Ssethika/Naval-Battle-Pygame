@@ -1,5 +1,5 @@
 from Enums import ShipType, ship_sizes
-from Button import ShipButton
+from Button import ShipButton, MenuButton
 from Text import Text
 
 from UIElement import UIElement
@@ -21,7 +21,6 @@ class Ui(UIElement):
         self.destroyer_button = ShipButton((200, 20, 20), 640, 190, "Destroyer:  3", self.screen, ShipType.DESTROYER, self.game)
         self.cruiser_button = ShipButton((200, 20, 20), 640, 280, "Cruiser:  4", self.screen, ShipType.CRUISER, self.game)
         self.aircraft_carrier_button = ShipButton((200, 20, 20), 640, 370, "Carrier:  5", self.screen, ShipType.AIRCRAFT_CARRIER, self.game)
-
         self.ui_elements_placing_ships = [self.text_selected_ship, *self.ship_buttons_list]
         self.ui_elements_placing_ships = [self.text_selected_ship, *self.ship_buttons_list]
         print(self.ui_elements_placing_ships)
@@ -66,7 +65,6 @@ class Ui(UIElement):
         self.hidden = True
 
     def update(self):
-        self.ship_button_update()
         if self.game.is_placing_ships is True:
             assert not self.game.is_attacking_ships
 
