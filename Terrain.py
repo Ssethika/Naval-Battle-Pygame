@@ -1,6 +1,8 @@
+from typing import Tuple
+
 import pygame
 from Cell import Cell
-from Enums import CellType, Direction, GameState, ship_sizes
+from Enums import CellType, Direction, GameState, ship_sizes, ShipType
 from Renderable import Renderable
 
 
@@ -45,7 +47,6 @@ class Terrain(Renderable):
     # Confirm the cell placement by turning all the SELECT cell type to SHIP.
     def select_confirm(self):
 
-        print(self.game.chosen_ships)
         if self.game.current_select.name in self.game.chosen_ships:
             print("You have already placed this ship")
             return
@@ -176,16 +177,16 @@ class Terrain(Renderable):
         game.game_state = GameState.ACTIVE
 
 
-    def place_ship_ai(self, ship_type, coordinate, direction, game):
+    def place_ship_ai(self, ship_type: ShipType, coordinate: Tuple[int, int], direction: Direction, game):
         """
 
-        :param ship_type:
-        :param coordinate:
-        :param direction:
-        :param game:
+        :param ship_type: ShipType
+        :param coordinate: Tuple[int, int]
+        :param direction: Direction
+        :param game: Game
         """
-        ship_size = ship_sizes[ship_type]
-        is_chosen_start_ship = False
+        ship_size: int = ship_sizes[ship_type]
+        is_chosen_start_ship: bool = False
 
         # cx and cy are the two coordinates of the cells that go pressed.
         # IMPORTANT: cy goes from top to bottom in order.

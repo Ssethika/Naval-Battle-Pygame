@@ -8,6 +8,7 @@ from UIElement import UIElement
 class Button(UIElement):
     def __init__(self, color, pos_x, pos_y, width, height, text: str, screen):
         pygame.font.init()
+        pygame.init()
         self.pos_x = pos_x
         self.pos_y = pos_y
         self.width = width
@@ -49,8 +50,8 @@ class Button(UIElement):
                     self.clicked = True
                     self.on_click()
 
-        if pygame.mouse.get_pressed()[0] == 0:
-            self.clicked = False
+                else:
+                    self.clicked = False
 
     def reset(self):
         self.color = self.initial_color
@@ -58,7 +59,7 @@ class Button(UIElement):
     def update(self):
         self.check_if_clicked()
 
-    def hide(self):
+    def disable(self):
         self.color = (0, 0, 0)
         self.border_color = (0, 0, 0)
         self.hidden = True
@@ -95,7 +96,6 @@ class ShipButton(Button):
             return True
         else:
             print(self.ship_type, self.game.chosen_ships)
-            print("You already chose this ship")
             return False
 
 class MenuButton(Button):
@@ -106,5 +106,4 @@ class MenuButton(Button):
 
     def on_click(self):
         # self.game.running = True
-        print("Clicked")
         self.on_click_method()

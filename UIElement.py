@@ -5,7 +5,7 @@ from Renderable import Renderable
 class UIElement(ABC):
 
     @abstractmethod
-    def hide(self):
+    def disable(self):
         pass
 
     @abstractmethod

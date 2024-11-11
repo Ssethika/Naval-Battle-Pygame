@@ -28,7 +28,6 @@ class Cell(Renderable):
 
     @is_hidden.setter
     def is_hidden(self, is_hidden):
-        print("is_hidden")
         self._is_hidden = is_hidden
 
     @property

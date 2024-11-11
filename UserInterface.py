@@ -23,8 +23,6 @@ class Ui(UIElement):
         self.aircraft_carrier_button = ShipButton((200, 20, 20), 640, 370, "Carrier:  5", self.screen, ShipType.AIRCRAFT_CARRIER, self.game)
         self.ui_elements_placing_ships = [self.text_selected_ship, *self.ship_buttons_list]
         self.ui_elements_placing_ships = [self.text_selected_ship, *self.ship_buttons_list]
-        print(self.ui_elements_placing_ships)
-
         #self.ship_buttons_list = [self.corvette_button, self.frigate_button, self.destroyer_button, self.cruiser_button, self.aircraft_carrier_button]
 
     @property
@@ -53,10 +51,10 @@ class Ui(UIElement):
             self.text_score.render()
             self.text_number_of_shots.render()
 
-    def hide(self):
+    def disable(self):
         self.is_placing_ships = False
         for ui_element in self.ui_elements_placing_ships:
-            ui_element.hide()
+            ui_element.disable()
             self.screen.fill(self.game.background_color, ui_element.rect)
 
         self.text_current_player.hidden = True

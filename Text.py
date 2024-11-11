@@ -31,11 +31,10 @@ class Text(UIElement):
      def reset(self):
          self._text_literal = self.initial_text_literal
 
-     def hide(self):
+     def disable(self):
          self.hidden = True
          self._pos_y = 2000
          self._pos_x = 2000
-         print("hidden")
          self.text_literal = " "
 
      @property

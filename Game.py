@@ -22,11 +22,30 @@ FINISH_DELAY_EVENT = pygame.USEREVENT + 3
 AI_HIT_REVEAL_DELAY_EVENT = pygame.USEREVENT + 4
 AI_MISSED_REVEAL_DELAY_EVENT = pygame.USEREVENT + 5
 
+
+
+
 # Main game class implementation.
 class Game:
     def __init__(self):
         self.screen: SurfaceType = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-        self.background_color: Tuple[int, int, int] = (0, 0, 0) # Black
+        self.background_color: Tuple[int, int, int] = (0, 0, 0)
+        self.initialize_game()
+        self.menu: UserInterface = StartMenu(self.screen, self)
+        self.replay_menu: UserInterface = ReplayMenu(self.screen, self)
+
+    def de_initialize_game(self):
+        del self.ui
+        del self.chosen_ships
+        del self.pressed_ship_button
+        del self.terrain_1
+        del self.terrain_2
+        del self.player_1
+        del self.player_2
+        del self.current_player
+        del self.winning_player
+
+    def initialize_game(self):
 
         # Initialising UI.
         self.ui: Ui = Ui(self.screen, self)
@@ -53,95 +72,85 @@ class Game:
         self.in_replay_menu: bool = False
         self.winning_player: Player | None = None
         self.clock: Clock = pygame.time.Clock()
-        self.menu: UserInterface = StartMenu(self.screen, self)
-        self.replay_menu: UserInterface = ReplayMenu(self.screen, self)
+
 
         # Temporary solution for storing what was the cell that was.
         self.last_hit_cell_ship: Tuple[int, int] | None = None
-        pygame.init()
-        pygame.mixer.init()
+        # pygame.init()
+        # pygame.mixer.init()
+
 
     def replay(self) -> None:
-        self.reset()
+        print("Before game de-initialized, Initialized: ", pygame.get_init())
+        print("Before game de-initialized, Initialized: ", pygame.get_error())
+        self.de_initialize_game()
+        print("After game de-initialized, Initialized: ", pygame.get_init())
+        print("After game de-initialized, Initialized: ", pygame.get_error())
+        self.initialize_game()
+        print("After game initialized, Initialized: ", pygame.get_init())
+        print("After game initialized, Initialized: ", pygame.get_error())
+        self.in_menu = True
+        self.menu.reset()
+        print("After menu reset, Initialized: ", pygame.get_init())
+        print("After menu reset, Initialized: ", pygame.get_error())
         self.play()
 
     def reset(self) -> None:
-        self.screen: SurfaceType = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-        self.background_color: Tuple[int, int, int] = (0, 0, 0)  # Black
-
-        # Initialising UI.
-        self.ui: Ui = Ui(self.screen, self)
-        self.clicked: bool = False
-        # List of all placed ships which is useful to guarantee that there is no duplicate
-        self.chosen_ships: list[ShipType] = []
-        self.is_placing_ships: bool = True
-        self.is_attacking_ships: bool = False
-        # Variable that keeps track of which button is pressed
-        self.pressed_ship_button: Button | None = None
-        self.game_state: GameState = GameState.ACTIVE
-
-        self.terrain_1: Terrain = Terrain(self.screen, self, (200, 0, 0))
-        self.terrain_2: Terrain = Terrain(self.screen, self, (0, 0, 200))
-
-        self.player_1: Player = Player(self.terrain_1, "Player 1")
-        self.player_2: Player = Player(self.terrain_2, "Player 2")
-        self.current_player: Player = self.player_1
-        self.colliding: bool | None = None
-        self.current_select: bool | None = None
-        self.selecting_cells: bool = False
-        self.running: bool = True
-        self.in_menu: bool = True
-        self.in_replay_menu: bool = False
-        self.winning_player: Player | None = None
-        self.clock: Clock = pygame.time.Clock()
-        self.menu: UserInterface = StartMenu(self.screen, self)
-        self.replay_menu: UserInterface = ReplayMenu(self.screen, self)
-
-        # Temporary solution for storing what was the cell that was.
-        self.last_hit_cell_ship: Tuple[int, int] | None = None
-        pygame.init()
-        pygame.mixer.init()
+        # self.screen: SurfaceType = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+        # self.background_color: Tuple[int, int, int] = (0, 0, 0)  # Black
+        self.initialize_game()
 
     def play(self) -> None:
+        print("After play reset, Initialized: ", pygame.get_init())
+        print("After play reset, Initialized: ", pygame.get_error())
+        self.in_replay_menu = False
+        # self.menu.disable()
         while self.in_menu is True:
-            self.handle_menu_quit()
+            print("Initialize", pygame.display.get_init())
+            self.handle_quit()
             self.menu.render()
+            print(pygame.get_error())
+            print("Initialized: ", pygame.display.get_init())
+            # pygame.display.flip()
 
     def run(self) -> None:
         # The main event loop.
         # Setup pygame, clock and screen.
-
+        self.in_menu = False
+        self.menu.disable()
         while self.running:
             # poll for events
-            # pygame.QUIT event means the user clicked X to close your window
-            if self.is_placing_ships:
-                self.place_ships()
-                self.game_state = GameState.ATTACKING
+            if self.in_replay_menu is False:# pygame.QUIT event means the user clicked X to close your window
+                if self.is_placing_ships:
+                    self.place_ships()
+                    self.game_state = GameState.ATTACKING
+                self.screen.fill("black")
+                self.ui.run()
+                self.handle_events()
+                self.current_player.terrain.render()
+                #self.current_player.terrain.handle_hover()
+                self.current_player.terrain.draw_line()
+                self.handle_ship_attack_events()
 
-            self.screen.fill("black")
-            self.ui.run()
-            self.handle_events()
-            self.current_player.terrain.render()
-            #self.current_player.terrain.handle_hover()
-            self.current_player.terrain.draw_line()
-            self.handle_ship_attack_events()
+                if self.current_player.score >= 17:
+                    self.winning_player = self.current_player
+                    self.in_replay_menu = True
+                    self.running = False
 
-            if self.current_player.score >= 17:
-                self.winning_player = self.current_player
-                pygame.time.set_timer(FINISH_DELAY_EVENT, 500)
-
-            # flip() the display to put your work on screen
-            pygame.display.flip()
-            self.clock.tick(30) # limits FPS to 30`
-
+                # flip() the display to put your work on screen
+                pygame.display.flip()
+                self.clock.tick(30) # limits FPS to 30`
+            # self.handle_quit()
+        print("Before replay, Initialized: ", pygame.get_init())
+        print("Before replay, Initialized: ", pygame.get_error())
         while self.in_replay_menu is True:
-            self.handle_menu_quit()
+            self.handle_quit()
             self.replay_menu.render()
-
-        pygame.quit()
+    pygame.quit()
 
     def run_ai(self):
-        self.current_player = self.player_2
+        self.current_player = self.player_1
+        self.menu.disable()
         pygame.init()
         pygame.mixer.init()
         clock: Clock = pygame.time.Clock()
@@ -150,30 +159,30 @@ class Game:
         self.ai_auto_place(ShipType.DESTROYER)
         self.ai_auto_place(ShipType.CRUISER)
         self.ai_auto_place(ShipType.AIRCRAFT_CARRIER)
-        print(self.player_2.terrain)
         while self.running:
             while self.is_placing_ships:
                 # self.ui.text_current_player.render()
+                self.current_player = self.player_2
                 self.handle_ship_placing_events()
                 # fill the screen with a color to wipe away anything from last frame
 
                 self.screen.fill("black")
 
-                self.current_player.terrain.render()
-                self.current_player.terrain.handle_hover()
-                self.current_player.terrain.draw_line()
+                self.player_2.terrain.render()
+                self.player_2.terrain.handle_hover()
+                self.player_2.terrain.draw_line()
                 if self.ui.is_placing_ships:
                     self.ui.run()
                 # self.is_placing_ships = False
-                if len(self.chosen_ships) >= 5 and self.current_player is self.player_1:
+                if len(self.chosen_ships) >= 5 and self.current_player is self.player_2:
                     self.chosen_ships = []
                     self.ui.reset()
-                    self.current_player = self.player_2
+                    self.current_player = self.player_1
                     self.player_1.terrain.is_hidden = True
                     self.player_2.terrain.is_hidden = True
                     self.ui.disable_ship_buttons()
                     for button in self.ui.ship_buttons_list:
-                        button.hide()
+                        button.disable()
                     self.ui.text_selected_ship.coords = (650, 10)
                     self.is_placing_ships = False
                     self.is_attacking_ships = True
@@ -185,23 +194,27 @@ class Game:
             self.ui.run()
             self.handle_events()
             self.current_player.terrain.render()
-            # self.current_player.terrain.handle_hover()
+            self.current_player.terrain.handle_hover()
             self.current_player.terrain.draw_line()
-            if self.current_player is self.player_2:
+            if self.current_player is self.player_1:
                 self.handle_ship_attack_events()
             else:
                 self.handle_ai_ship_attack_events()
 
             if self.current_player.score >= 17:
-                print("Hello")
-                self.ui.text_selected_ship = f"{str(self.current_player)} has won"
-                pygame.time.set_timer(FINISH_DELAY_EVENT, 500)
+                self.running = False
+                self.in_replay_menu = True
+                self.winning_player = self.player_1 if self.current_player is self.player_2 else self.player_2
             # flip() the display to put your work on screen
             pygame.display.flip()
             clock.tick(30)  # limits FPS to 30`
+        while self.in_replay_menu is True:
+            self.handle_quit()
+            self.replay_menu.render()
+
         pygame.quit()
 
-    def handle_menu_quit(self):
+    def handle_quit(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -213,7 +226,7 @@ class Game:
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_h:
-                    self.ui.hide()
+                    self.ui.disable()
 
             if event.type == MISSED_REVEAL_DELAY_EVENT:
                 self.handle_timer_event(event)
@@ -234,9 +247,12 @@ class Game:
     def handle_ai_ship_attack_events(self, selected_cell_coords=None):
         if selected_cell_coords is None:
             selected_cell_coords = (randint(0, 9), randint(0, 9))
+
         if self.current_player.terrain.clicked is False:
             # selected_cell_coords = (randint(0, 9),randint(0, 9))
             cell = self.current_player.terrain.terrain_cells[selected_cell_coords[0]][selected_cell_coords[1]]
+            if cell.hit is True:
+                self.handle_ai_ship_attack_events()
             if cell.state == CellType.SUNK:
                 self.handle_ai_ship_attack_events()
             elif cell.state == CellType.WATER:
@@ -266,7 +282,6 @@ class Game:
                 if self.current_player.terrain.clicked is False:
                     if cell.rect.collidepoint(mouse_pos):
                         if pygame.mouse.get_pressed()[0] == 1:
-                            print("pressed")
                             if cell.state == CellType.WATER:
                                 self.ui.text_selected_ship.text_literal = "Missed!! "
                                 self.current_player.shots += 1
@@ -301,21 +316,29 @@ class Game:
             self.current_player.terrain.clicked = False
             pygame.time.set_timer(HIT_REVEAL_DELAY_EVENT, 0)
         elif event.type == FINISH_DELAY_EVENT:
-            self.in_replay_menu = True
             self.running = False
             pygame.time.set_timer(FINISH_DELAY_EVENT, 0)
         elif event.type == AI_MISSED_REVEAL_DELAY_EVENT:
-            self.current_player = self.player_2
-            self.current_player.terrain.clicked = False
+            self.player_1.terrain.clicked = False
+            self.current_player = self.player_1
             pygame.time.set_timer(AI_MISSED_REVEAL_DELAY_EVENT, 0)
         elif event.type == AI_HIT_REVEAL_DELAY_EVENT:
             self.current_player.terrain.clicked = False
-
             pygame.time.set_timer(AI_HIT_REVEAL_DELAY_EVENT, 0)
+            new_cell_target_x = self.last_hit_cell_ship[0] + random.choice([-1, 1])
+            new_cell_target_y = self.last_hit_cell_ship[1] + random.choice([-1, 1])
             if randint(0, 1):
-                self.handle_ai_ship_attack_events((self.last_hit_cell_ship[0] + random.choice([-1, 1]), self.last_hit_cell_ship[1]))
+                if new_cell_target_x >= 10:
+                    new_cell_target_x = 9
+                elif new_cell_target_x <= -1:
+                    new_cell_target_x = 0
+                self.handle_ai_ship_attack_events((new_cell_target_x, self.last_hit_cell_ship[1]))
             else:
-                self.handle_ai_ship_attack_events((self.last_hit_cell_ship[0], self.last_hit_cell_ship[1] + random.choice([-1, 1])))
+                if new_cell_target_y >= 10:
+                    new_cell_target_y = 9
+                elif new_cell_target_y <= -1:
+                    new_cell_target_y = 0
+                self.handle_ai_ship_attack_events((self.last_hit_cell_ship[0], new_cell_target_y))
 
     def handle_ship_placing_events(self):
         for event in pygame.event.get():
@@ -326,7 +349,7 @@ class Game:
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_h:
-                    self.ui.hide()
+                    self.ui.disable()
 
             # Check if the state of the game is active and wait for the player to press the arrow key to confirm the selection of the ship.
             if self.game_state == GameState.ACTIVE:
@@ -427,7 +450,7 @@ class Game:
                 self.current_player = self.player_1
                 self.ui.disable_ship_buttons()
                 for button in self.ui.ship_buttons_list:
-                    button.hide()
+                    button.disable()
                 self.ui.text_selected_ship.coords = (650, 10)
                 self.is_placing_ships = False
                 self.is_attacking_ships = True
