@@ -19,11 +19,9 @@ SCREEN_HEIGHT = 720
 MISSED_REVEAL_DELAY_EVENT = pygame.USEREVENT + 1
 HIT_REVEAL_DELAY_EVENT = pygame.USEREVENT + 2
 FINISH_DELAY_EVENT = pygame.USEREVENT + 3
-AI_HIT_REVEAL_DELAY_EVENT = pygame.USEREVENT + 4
+AI_HIT_SMART_REVEAL_DELAY_EVENT = pygame.USEREVENT + 4
 AI_MISSED_REVEAL_DELAY_EVENT = pygame.USEREVENT + 5
-
-
-
+AI_HIT_STUPID_REVEAL_DELAY_EVENT = pygame.USEREVENT + 6
 
 # Main game class implementation.
 class Game:
@@ -45,8 +43,8 @@ class Game:
         del self.current_player
         del self.winning_player
 
-    def initialize_game(self):
 
+    def initialize_game(self):
         # Initialising UI.
         self.ui: Ui = Ui(self.screen, self)
         self.clicked: bool = False
@@ -79,6 +77,9 @@ class Game:
         # pygame.init()
         # pygame.mixer.init()
 
+    def choose_ai_skill_level(self) -> None:
+        self.menu.hide()
+        self.in_menu = False
 
     def replay(self) -> None:
         print("Before game de-initialized, Initialized: ", pygame.get_init())
@@ -148,7 +149,7 @@ class Game:
             self.replay_menu.render()
     pygame.quit()
 
-    def run_ai(self):
+    def run_ai(self, ai_attack_function):
         self.current_player = self.player_1
         self.menu.disable()
         pygame.init()
@@ -199,8 +200,7 @@ class Game:
             if self.current_player is self.player_1:
                 self.handle_ship_attack_events()
             else:
-                self.handle_ai_medium_ship_attack_events()
-
+                ai_attack_function()
             if self.current_player.score >= 17:
                 self.running = False
                 self.in_replay_menu = True
@@ -237,14 +237,42 @@ class Game:
             if event.type == FINISH_DELAY_EVENT:
                 self.handle_timer_event(event)
 
-            if event.type == AI_HIT_REVEAL_DELAY_EVENT:
+            if event.type == AI_HIT_SMART_REVEAL_DELAY_EVENT:
                 self.handle_timer_event(event)
 
             if event.type == AI_MISSED_REVEAL_DELAY_EVENT:
                 self.handle_timer_event(event)
 
+            if event.type == AI_HIT_STUPID_REVEAL_DELAY_EVENT:
+                self.handle_timer_event(event)
 
-    def handle_ai_medium_ship_attack_events(self, selected_cell_coords=None):
+    def handle_ai_stupid_ship_attack_events(self):
+        selected_cell_coords = (randint(0, 9), randint(0, 9))
+
+        if self.current_player.terrain.clicked is False:
+            # selected_cell_coords = (randint(0, 9),randint(0, 9))
+            cell = self.current_player.terrain.terrain_cells[selected_cell_coords[0]][selected_cell_coords[1]]
+            if cell.hit is True:
+                self.handle_ai_smart_ship_attack_events()
+            if cell.state == CellType.SUNK:
+                self.handle_ai_smart_ship_attack_events()
+            elif cell.state == CellType.WATER:
+                self.ui.text_selected_ship.text_literal = "Missed!! "
+                cell.reveal()
+                self.current_player.shots += 1
+                self.current_player.terrain.clicked = True
+                pygame.time.set_timer(AI_MISSED_REVEAL_DELAY_EVENT, 500)
+
+            elif cell.state == CellType.SHIP:
+                self.current_player.terrain.clicked = True
+                cell.state = CellType.SUNK
+                self.ui.text_selected_ship.text_literal = "Shot!! "
+                self.current_player.score += 1
+                cell.reveal()
+                self.current_player.shots += 1
+                pygame.time.set_timer(AI_HIT_STUPID_REVEAL_DELAY_EVENT, 300)
+
+    def handle_ai_smart_ship_attack_events(self, selected_cell_coords=None):
         if selected_cell_coords is None:
             selected_cell_coords = (randint(0, 9), randint(0, 9))
 
@@ -252,9 +280,9 @@ class Game:
             # selected_cell_coords = (randint(0, 9),randint(0, 9))
             cell = self.current_player.terrain.terrain_cells[selected_cell_coords[0]][selected_cell_coords[1]]
             if cell.hit is True:
-                self.handle_ai_medium_ship_attack_events()
+                self.handle_ai_smart_ship_attack_events()
             if cell.state == CellType.SUNK:
-                self.handle_ai_medium_ship_attack_events()
+                self.handle_ai_smart_ship_attack_events()
             elif cell.state == CellType.WATER:
                 self.ui.text_selected_ship.text_literal = "Missed!! "
                 cell.reveal()
@@ -270,10 +298,7 @@ class Game:
                 cell.reveal()
                 self.current_player.shots += 1
                 self.last_hit_cell_ship = (selected_cell_coords[0], selected_cell_coords[1])
-                pygame.time.set_timer(AI_HIT_REVEAL_DELAY_EVENT, 300)
-
-
-
+                pygame.time.set_timer(AI_HIT_SMART_REVEAL_DELAY_EVENT, 300)
 
     def handle_ship_attack_events(self):
         for row in self.current_player.terrain.terrain_cells:
@@ -282,6 +307,8 @@ class Game:
                 if self.current_player.terrain.clicked is False:
                     if cell.rect.collidepoint(mouse_pos):
                         if pygame.mouse.get_pressed()[0] == 1:
+                            if cell.hit is True:
+                                return
                             if cell.state == CellType.WATER:
                                 self.ui.text_selected_ship.text_literal = "Missed!! "
                                 self.current_player.shots += 1
@@ -322,9 +349,13 @@ class Game:
             self.player_1.terrain.clicked = False
             self.current_player = self.player_1
             pygame.time.set_timer(AI_MISSED_REVEAL_DELAY_EVENT, 0)
-        elif event.type == AI_HIT_REVEAL_DELAY_EVENT:
+        elif event.type == AI_HIT_STUPID_REVEAL_DELAY_EVENT:
+            self.handle_ai_stupid_ship_attack_events()
             self.current_player.terrain.clicked = False
-            pygame.time.set_timer(AI_HIT_REVEAL_DELAY_EVENT, 0)
+            pygame.time.set_timer(AI_HIT_STUPID_REVEAL_DELAY_EVENT, 0)
+        elif event.type == AI_HIT_SMART_REVEAL_DELAY_EVENT:
+            self.current_player.terrain.clicked = False
+            pygame.time.set_timer(AI_HIT_SMART_REVEAL_DELAY_EVENT, 0)
             new_cell_target_x = self.last_hit_cell_ship[0] + random.choice([-1, 1])
             new_cell_target_y = self.last_hit_cell_ship[1] + random.choice([-1, 1])
             if randint(0, 1):
@@ -332,13 +363,15 @@ class Game:
                     new_cell_target_x = 9
                 elif new_cell_target_x <= -1:
                     new_cell_target_x = 0
-                self.handle_ai_medium_ship_attack_events((new_cell_target_x, self.last_hit_cell_ship[1]))
+                self.handle_ai_smart_ship_attack_events((new_cell_target_x, self.last_hit_cell_ship[1]))
             else:
                 if new_cell_target_y >= 10:
                     new_cell_target_y = 9
                 elif new_cell_target_y <= -1:
                     new_cell_target_y = 0
-                self.handle_ai_medium_ship_attack_events((self.last_hit_cell_ship[0], new_cell_target_y))
+                self.handle_ai_smart_ship_attack_events((self.last_hit_cell_ship[0], new_cell_target_y))
+
+
 
     def handle_ship_placing_events(self):
         for event in pygame.event.get():
