@@ -199,7 +199,7 @@ class Game:
             if self.current_player is self.player_1:
                 self.handle_ship_attack_events()
             else:
-                self.handle_ai_ship_attack_events()
+                self.handle_ai_medium_ship_attack_events()
 
             if self.current_player.score >= 17:
                 self.running = False
@@ -244,7 +244,7 @@ class Game:
                 self.handle_timer_event(event)
 
 
-    def handle_ai_ship_attack_events(self, selected_cell_coords=None):
+    def handle_ai_medium_ship_attack_events(self, selected_cell_coords=None):
         if selected_cell_coords is None:
             selected_cell_coords = (randint(0, 9), randint(0, 9))
 
@@ -252,9 +252,9 @@ class Game:
             # selected_cell_coords = (randint(0, 9),randint(0, 9))
             cell = self.current_player.terrain.terrain_cells[selected_cell_coords[0]][selected_cell_coords[1]]
             if cell.hit is True:
-                self.handle_ai_ship_attack_events()
+                self.handle_ai_medium_ship_attack_events()
             if cell.state == CellType.SUNK:
-                self.handle_ai_ship_attack_events()
+                self.handle_ai_medium_ship_attack_events()
             elif cell.state == CellType.WATER:
                 self.ui.text_selected_ship.text_literal = "Missed!! "
                 cell.reveal()
@@ -332,13 +332,13 @@ class Game:
                     new_cell_target_x = 9
                 elif new_cell_target_x <= -1:
                     new_cell_target_x = 0
-                self.handle_ai_ship_attack_events((new_cell_target_x, self.last_hit_cell_ship[1]))
+                self.handle_ai_medium_ship_attack_events((new_cell_target_x, self.last_hit_cell_ship[1]))
             else:
                 if new_cell_target_y >= 10:
                     new_cell_target_y = 9
                 elif new_cell_target_y <= -1:
                     new_cell_target_y = 0
-                self.handle_ai_ship_attack_events((self.last_hit_cell_ship[0], new_cell_target_y))
+                self.handle_ai_medium_ship_attack_events((self.last_hit_cell_ship[0], new_cell_target_y))
 
     def handle_ship_placing_events(self):
         for event in pygame.event.get():
