@@ -301,7 +301,7 @@ class Game:
                 cell.reveal()
                 self.current_player.shots += 1
                 self.current_player.terrain.clicked = True
-                self.play(self.water_splash_sound)
+                self.sound_play(self.water_splash_sound)
                 pygame.time.set_timer(AI_MISSED_REVEAL_DELAY_EVENT, 500)
 
             elif cell.state == CellType.SHIP:
@@ -311,8 +311,8 @@ class Game:
                 self.current_player.score += 1
                 cell.reveal()
                 self.current_player.shots += 1
-                self.play(self.explosion_sound)
-                pygame.time.set_timer(AI_HIT_STUPID_REVEAL_DELAY_EVENT, 500)
+                self.sound_play(self.explosion_sound)
+                pygame.time.set_timer(AI_HIT_STUPID_REVEAL_DELAY_EVENT, 1000)
 
     def handle_ai_smart_ship_attack_events(self, selected_cell_coords=None):
         if selected_cell_coords is None:
@@ -330,8 +330,8 @@ class Game:
                 cell.reveal()
                 self.current_player.shots += 1
                 self.current_player.terrain.clicked = True
-                self.play(self.water_splash_sound)
-                pygame.time.set_timer(AI_MISSED_REVEAL_DELAY_EVENT, 500)
+                self.sound_play(self.water_splash_sound)
+                pygame.time.set_timer(AI_MISSED_REVEAL_DELAY_EVENT, 1000)
 
             elif cell.state == CellType.SHIP:
                 self.current_player.terrain.clicked = True
@@ -341,8 +341,8 @@ class Game:
                 cell.reveal()
                 self.current_player.shots += 1
                 self.last_hit_cell_ship = (selected_cell_coords[0], selected_cell_coords[1])
-                self.play(self.explosion_sound)
-                pygame.time.set_timer(AI_HIT_SMART_REVEAL_DELAY_EVENT, 500)
+                self.sound_play(self.explosion_sound)
+                pygame.time.set_timer(AI_HIT_SMART_REVEAL_DELAY_EVENT, 1000)
 
     def handle_ship_attack_events(self):
         for row in self.current_player.terrain.terrain_cells:
@@ -371,9 +371,9 @@ class Game:
 
                             self.current_player.terrain.clicked = True
                             if cell.state == CellType.SUNK:
-                                pygame.time.set_timer(HIT_REVEAL_DELAY_EVENT, 300)
+                                pygame.time.set_timer(HIT_REVEAL_DELAY_EVENT, 1000)
                             elif cell.state == CellType.WATER:
-                                pygame.time.set_timer(MISSED_REVEAL_DELAY_EVENT, 500)
+                                pygame.time.set_timer(MISSED_REVEAL_DELAY_EVENT, 1000)
 
                     if pygame.mouse.get_pressed()[0] == 0:
                         self.current_player.terrain.clicked = False

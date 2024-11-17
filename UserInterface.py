@@ -14,7 +14,7 @@ class Ui(UIElement):
         self.text_number_remaining_ship = Text(700, 600, "", self.screen, self.game)
         self.text_number_of_shots = Text(500, 620, "", self.screen, self.game)
         self.text_selected_ship = Text(650, 450, "None", self.screen, self.game)
-        self.text_current_player = Text(275, 620, "Current: Player", self.screen, self.game)
+        self.text_current_player = Text(275, 620, "Current: Player", self.screen, self.game, size=25)
         self.text_score = Text(400, 620, "", self.screen, self.game)
         self.corvette_button = ShipButton((200, 20, 20), 640, 10, "Corvette: 2", self.screen, ShipType.CORVETTE, self.game)
         self.frigate_button = ShipButton((200, 20, 20), 640, 100, "Frigate:  3", self.screen, ShipType.FRIGATE, self.game)
