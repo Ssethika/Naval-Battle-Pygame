@@ -2,13 +2,13 @@ import pygame.font
 from UIElement import UIElement
 
 class Text(UIElement):
-     def __init__(self, pos_x, pos_y, text, screen, game):
+     def __init__(self, pos_x, pos_y,  text, screen, game, size=20):
          pygame.font.init()
          self._pos_x = pos_x
          self._pos_y = pos_y
          self.initial_text_literal = text
          self._text_literal = text
-         self.font = pygame.font.SysFont('grand9kpixelregular', 20)
+         self.font = pygame.font.SysFont('grand9kpixelregular', size)
          self.text_surface = self.font.render(self._text_literal, False, (255, 255, 255))
          self.rect = self.text_surface.get_rect()
          self.screen = screen

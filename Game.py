@@ -3,12 +3,13 @@ from random import randint
 from typing import Tuple
 import pygame
 from pygame import SurfaceType
+from pygame.mixer import SoundType
 from pygame.time import Clock
-
 import UserInterface
 from Button import Button
 from ReplayMenu import ReplayMenu
 from StartMenu import StartMenu
+from AiLevelChooser import AiLevelChooser
 from Player import Player
 from UserInterface import Ui
 from Terrain import Terrain
@@ -25,14 +26,27 @@ AI_HIT_STUPID_REVEAL_DELAY_EVENT = pygame.USEREVENT + 6
 
 # Main game class implementation.
 class Game:
+    """
+       Main class for the game that handles initialization, game state, event handling,
+       and running the main game loop.
+    """
     def __init__(self):
+        """
+            Initializes the game by setting up the screen, background, menus, and sound mixer.
+        """
         self.screen: SurfaceType = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         self.background_color: Tuple[int, int, int] = (0, 0, 0)
         self.initialize_game()
         self.menu: UserInterface = StartMenu(self.screen, self)
         self.replay_menu: UserInterface = ReplayMenu(self.screen, self)
+        self.ai_level_chooser_menu: UserInterface = AiLevelChooser(self.screen, self)
+        pygame.init()
+        pygame.mixer.init()
 
     def de_initialize_game(self):
+        """
+            Clears game variables and objects for resetting or ending the game.
+        """
         del self.ui
         del self.chosen_ships
         del self.pressed_ship_button
@@ -43,8 +57,10 @@ class Game:
         del self.current_player
         del self.winning_player
 
-
     def initialize_game(self):
+        """
+            Initializes UI, players, terrains, and game state variables for a new game session.
+        """
         # Initialising UI.
         self.ui: Ui = Ui(self.screen, self)
         self.clicked: bool = False
@@ -68,62 +84,76 @@ class Game:
         self.running: bool = True
         self.in_menu: bool = True
         self.in_replay_menu: bool = False
+        self.in_difficulty_choosing_menu: bool = False
         self.winning_player: Player | None = None
         self.clock: Clock = pygame.time.Clock()
-
+        self.explosion_sound: SoundType = pygame.mixer.Sound("assets/missile-explosion.mp3")
 
         # Temporary solution for storing what was the cell that was.
         self.last_hit_cell_ship: Tuple[int, int] | None = None
         # pygame.init()
         # pygame.mixer.init()
+    def sound_play(self, sound):
+        """
+            Plays a given sound and stops any background music.
+
+        Parameters:
+            sound: The sound effect to play.
+        """
+        pygame.mixer.Sound.play(sound)
+        pygame.mixer.music.stop()
 
     def choose_ai_skill_level(self) -> None:
-        self.menu.hide()
+        """
+            Activates the AI skill level menu, allowing the player to choose the AI difficulty.
+        """
+        self.in_difficulty_choosing_menu = True
         self.in_menu = False
+        self.menu.disable()
+        while self.in_difficulty_choosing_menu is True:
+            self.ai_level_chooser_menu.render()
+            self.handle_quit()
+
 
     def replay(self) -> None:
-        print("Before game de-initialized, Initialized: ", pygame.get_init())
-        print("Before game de-initialized, Initialized: ", pygame.get_error())
+        """
+            Resets the game state to allow for replaying, reinitializing all relevant variables and UI elements.
+        """
         self.de_initialize_game()
-        print("After game de-initialized, Initialized: ", pygame.get_init())
-        print("After game de-initialized, Initialized: ", pygame.get_error())
-        self.initialize_game()
-        print("After game initialized, Initialized: ", pygame.get_init())
-        print("After game initialized, Initialized: ", pygame.get_error())
+        self.reset()
         self.in_menu = True
         self.menu.reset()
-        print("After menu reset, Initialized: ", pygame.get_init())
-        print("After menu reset, Initialized: ", pygame.get_error())
         self.play()
 
     def reset(self) -> None:
-        # self.screen: SurfaceType = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-        # self.background_color: Tuple[int, int, int] = (0, 0, 0)  # Black
+        """
+            Reinitialize the game screen and background, preparing the game for a fresh start.
+        """
         self.initialize_game()
 
     def play(self) -> None:
-        print("After play reset, Initialized: ", pygame.get_init())
-        print("After play reset, Initialized: ", pygame.get_error())
+        """
+            Handles the main game loop for the 'play' state where the player interacts with the menu.
+        """
         self.in_replay_menu = False
-        # self.menu.disable()
         while self.in_menu is True:
-            print("Initialize", pygame.display.get_init())
             self.handle_quit()
             self.menu.render()
-            print(pygame.get_error())
-            print("Initialized: ", pygame.display.get_init())
-            # pygame.display.flip()
 
     def run(self) -> None:
-        # The main event loop.
-        # Setup pygame, clock and screen.
+        """
+            Starts the main game loop for gameplay events, including handling quitting, ship placement,
+            and attacks, updating screen visuals, and tracking player scores.
+        """
         self.in_menu = False
         self.menu.disable()
         while self.running:
-            # poll for events
-            if self.in_replay_menu is False:# pygame.QUIT event means the user clicked X to close your window
+
+            if self.in_replay_menu is False:
                 if self.is_placing_ships:
+                    # Place the ships in the game
                     self.place_ships()
+                    # Set game state to attacking
                     self.game_state = GameState.ATTACKING
                 self.screen.fill("black")
                 self.ui.run()
@@ -134,6 +164,7 @@ class Game:
                 self.handle_ship_attack_events()
 
                 if self.current_player.score >= 17:
+                    # Finish the game
                     self.winning_player = self.current_player
                     self.in_replay_menu = True
                     self.running = False
@@ -141,20 +172,27 @@ class Game:
                 # flip() the display to put your work on screen
                 pygame.display.flip()
                 self.clock.tick(30) # limits FPS to 30`
-            # self.handle_quit()
-        print("Before replay, Initialized: ", pygame.get_init())
-        print("Before replay, Initialized: ", pygame.get_error())
+        # Drop back to replay menu when game is finish
         while self.in_replay_menu is True:
             self.handle_quit()
             self.replay_menu.render()
     pygame.quit()
 
     def run_ai(self, ai_attack_function):
+        """
+            Runs the game with AI logic, allowing AI attacks and player attacks in turn until a win condition is met.
+
+            Parameters:
+                ai_attack_function: The AI's attack strategy function to execute each turn.
+        """
+        self.in_difficulty_choosing_menu = False
         self.current_player = self.player_1
         self.menu.disable()
         pygame.init()
         pygame.mixer.init()
         clock: Clock = pygame.time.Clock()
+
+        # Place each ship automatically.
         self.ai_auto_place(ShipType.CORVETTE)
         self.ai_auto_place(ShipType.FRIGATE)
         self.ai_auto_place(ShipType.DESTROYER)
@@ -176,6 +214,7 @@ class Game:
                     self.ui.run()
                 # self.is_placing_ships = False
                 if len(self.chosen_ships) >= 5 and self.current_player is self.player_2:
+                    # Change to the player.
                     self.chosen_ships = []
                     self.ui.reset()
                     self.current_player = self.player_1
@@ -320,6 +359,7 @@ class Game:
                                 if cell.hit is False:
                                     self.current_player.score += 1
                                     cell.reveal()
+                                    self.sound_play(self.explosion_sound)
                             elif cell.state == CellType.SUNK:
                                 return
 
@@ -370,8 +410,6 @@ class Game:
                 elif new_cell_target_y <= -1:
                     new_cell_target_y = 0
                 self.handle_ai_smart_ship_attack_events((self.last_hit_cell_ship[0], new_cell_target_y))
-
-
 
     def handle_ship_placing_events(self):
         for event in pygame.event.get():
