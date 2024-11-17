@@ -88,6 +88,7 @@ class Game:
         self.winning_player: Player | None = None
         self.clock: Clock = pygame.time.Clock()
         self.explosion_sound: SoundType = pygame.mixer.Sound("assets/missile-explosion.mp3")
+        self.water_splash_sound: SoundType = pygame.mixer.Sound("assets/water-splash.mp3")
 
         # Temporary solution for storing what was the cell that was.
         self.last_hit_cell_ship: Tuple[int, int] | None = None
@@ -300,6 +301,7 @@ class Game:
                 cell.reveal()
                 self.current_player.shots += 1
                 self.current_player.terrain.clicked = True
+                self.play(self.water_splash_sound)
                 pygame.time.set_timer(AI_MISSED_REVEAL_DELAY_EVENT, 500)
 
             elif cell.state == CellType.SHIP:
@@ -309,7 +311,8 @@ class Game:
                 self.current_player.score += 1
                 cell.reveal()
                 self.current_player.shots += 1
-                pygame.time.set_timer(AI_HIT_STUPID_REVEAL_DELAY_EVENT, 300)
+                self.play(self.explosion_sound)
+                pygame.time.set_timer(AI_HIT_STUPID_REVEAL_DELAY_EVENT, 500)
 
     def handle_ai_smart_ship_attack_events(self, selected_cell_coords=None):
         if selected_cell_coords is None:
@@ -327,6 +330,7 @@ class Game:
                 cell.reveal()
                 self.current_player.shots += 1
                 self.current_player.terrain.clicked = True
+                self.play(self.water_splash_sound)
                 pygame.time.set_timer(AI_MISSED_REVEAL_DELAY_EVENT, 500)
 
             elif cell.state == CellType.SHIP:
@@ -337,7 +341,8 @@ class Game:
                 cell.reveal()
                 self.current_player.shots += 1
                 self.last_hit_cell_ship = (selected_cell_coords[0], selected_cell_coords[1])
-                pygame.time.set_timer(AI_HIT_SMART_REVEAL_DELAY_EVENT, 300)
+                self.play(self.explosion_sound)
+                pygame.time.set_timer(AI_HIT_SMART_REVEAL_DELAY_EVENT, 500)
 
     def handle_ship_attack_events(self):
         for row in self.current_player.terrain.terrain_cells:
@@ -351,6 +356,7 @@ class Game:
                             if cell.state == CellType.WATER:
                                 self.ui.text_selected_ship.text_literal = "Missed!! "
                                 self.current_player.shots += 1
+                                self.sound_play(self.water_splash_sound)
                                 cell.reveal()
                             elif cell.state == CellType.SHIP:
                                 self.current_player.shots += 1
@@ -396,6 +402,8 @@ class Game:
         elif event.type == AI_HIT_SMART_REVEAL_DELAY_EVENT:
             self.current_player.terrain.clicked = False
             pygame.time.set_timer(AI_HIT_SMART_REVEAL_DELAY_EVENT, 0)
+            if self.last_hit_cell_ship[0] is None or self.last_hit_cell_ship[1] is None:
+                self.handle_ai_smart_ship_attack_events()
             new_cell_target_x = self.last_hit_cell_ship[0] + random.choice([-1, 1])
             new_cell_target_y = self.last_hit_cell_ship[1] + random.choice([-1, 1])
             if randint(0, 1):

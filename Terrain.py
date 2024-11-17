@@ -46,34 +46,36 @@ class Terrain(Renderable):
 
     # Confirm the cell placement by turning all the SELECT cell type to SHIP.
     def select_confirm(self):
-
-        if self.game.current_select.name in self.game.chosen_ships:
+       """Confirm all the selected cells and turn them to a ship"""
+       if self.game.current_select.name in self.game.chosen_ships:
             print("You have already placed this ship")
             return
 
-        for row in self.terrain_cells:
+       for row in self.terrain_cells:
             for cell in row:
                 if cell.state == CellType.SELECT:
                     cell.state = CellType.SHIP
 
-        self.game.selecting_cells = False
+       self.game.selecting_cells = False
 
-        self.game.chosen_ships.append(self.game.current_select.name)
+       self.game.chosen_ships.append(self.game.current_select.name)
 
     def select_confirm_ai(self):
-
+        """Confirm all the selected cells and turn them to a ship for the AI"""
         for row in self.terrain_cells:
             for cell in row:
                 if cell.state == CellType.SELECT:
                     cell.state = CellType.SHIP
 
     def clear(self):
+        """Clear the terrain"""
         for row in self.terrain_cells:
             for cell in row:
                 if cell.state == CellType.HOVER or cell.state == CellType.SELECT:
                     cell.state = CellType.WATER
 
     def is_selected(self):
+        """"Check if selected"""
         for row in self.terrain_cells:
             for cell in row:
                 if cell.state == CellType.SELECT:
@@ -82,6 +84,10 @@ class Terrain(Renderable):
 
     # Function that handle mouse hovering of a cell.
     def handle_hover(self):
+        """
+        Handles hover in the terrain
+        :return: void
+        """
         # Get the current mouse position
         mouse_pos = pygame.mouse.get_pos()
 
@@ -95,10 +101,9 @@ class Terrain(Renderable):
                     # Otherwise, render the cell with its default color
                     cell.render()
 
-    """The main function that handles ship placement. TODO: Separate this function into smaller functions."""
     def place_ship(self, ship_type, coordinate, direction, game):
         """
-
+        The function that handles ship placement in PVP.
         :param ship_type:
         :param coordinate:
         :param direction:
@@ -179,7 +184,7 @@ class Terrain(Renderable):
 
     def place_ship_ai(self, ship_type: ShipType, coordinate: Tuple[int, int], direction: Direction, game):
         """
-
+        Place the ship by returning an output if it is successful or not.
         :param ship_type: ShipType
         :param coordinate: Tuple[int, int]
         :param direction: Direction
@@ -200,7 +205,7 @@ class Terrain(Renderable):
 
         #chosen_start.set_cell_state(CellType.HOVER)
         is_colliding = False
-        # TODO: We really need to extract this into a function.
+
         #check if the first selected cell has the state of ship at the beginning
         if not is_chosen_start_ship:
             if direction == Direction.RIGHT:
