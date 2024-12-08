@@ -1,6 +1,3 @@
-
-Voici une version améliorée et plus structurée du README que vous avez fourni :
-
 Projet de Sethika Samaranayake, William Pecoraro et Ilian Ghouti-Terki
 
                                       Description:
